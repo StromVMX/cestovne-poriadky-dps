@@ -60,23 +60,18 @@ const departures = {
 function fillScheduleTable(selectedStop) {
   const tbody = document.getElementById("scheduleBody");
   tbody.innerHTML = "";
+
   const stopIndex = stopsData.findIndex(s => s.name === selectedStop);
   if (stopIndex === -1) return;
 
+  const erbenovaIndex = stopsData.findIndex(s => s.name === "Erbenova");
+  const orlickyIndex = stopsData.findIndex(s => s.name === "Orličky, točna");
   const ctpIndex = stopsData.findIndex(s => s.name === "CTPark Strančice");
   const cepkovIndex = stopsData.findIndex(s => s.name === "Čepkov");
 
-  const erbenovaIndex = stopsData.findIndex(s => s.name === "Erbenova");
-  const orlickyIndex = stopsData.findIndex(s => s.name === "Orličky, točna");
-
   let offset = 0;
-
   for (let i = 0; i < stopIndex; i++) {
-    if (stopsData[i].name === "CTPark Strančice") {
-      offset += 0;
-    } else {
-      offset += travelTimes[i];
-    }
+    offset += travelTimes[i];
   }
 
   const adjustedDepartures = {};
@@ -99,23 +94,20 @@ function fillScheduleTable(selectedStop) {
           baseMinute = min;
         }
 
-        const isCSpoj = suffix.includes("C");
+        const isT = suffix.includes("T");
 
-        if (stopIndex > ctpIndex && isCSpoj) {
-          suffix = suffix.replace("C", "");
+        // 👉 Filtrovanie podľa zastávky a prípony "T"
+        if (stopIndex >= erbenovaIndex) {
+          if (!isT) return; // spoje bez "T" končia pred Erbenovou
         }
-
-        if (selectedStop === "CTPark Strančice" && !isCSpoj) return;
 
         let timeOffset = offset;
 
-        if (isCSpoj) {
-          if (stopIndex > cepkovIndex) {
-            timeOffset += 1;
-          }
-          if (stopIndex > ctpIndex) {
-            timeOffset += 3;
-          }
+        // Príklad s C-spojmi
+        const isC = suffix.includes("C");
+        if (isC) {
+          if (stopIndex > cepkovIndex) timeOffset += 1;
+          if (stopIndex > ctpIndex) timeOffset += 3;
         }
 
         const totalMinutes = parseInt(hour) * 60 + baseMinute + timeOffset;
@@ -142,14 +134,7 @@ function fillScheduleTable(selectedStop) {
     const row = document.createElement("tr");
     const th = document.createElement("td");
     th.classList.add("hour");
-
-    // Ak sa vybraná zastávka nachádza medzi Erbenova a Orličky, točna, pridaj odsadenie
-    if (stopIndex >= erbenovaIndex && stopIndex <= orlickyIndex) {
-      th.textContent = "" + hour;
-    } else {
-      th.textContent = hour;
-    }
-
+    th.textContent = hour;
     row.appendChild(th);
 
     ["schoolDays", "holidays", "freeDays"].forEach(type => {
@@ -157,9 +142,6 @@ function fillScheduleTable(selectedStop) {
       const minutes = adjustedDepartures[hour][type]
         .sort((a, b) => a.minute - b.minute)
         .map(({ minute, suffix }) => {
-          if (stopIndex > ctpIndex && suffix.includes("T")) {
-            suffix = suffix.replace("T", "");
-          }
           return minute.toString().padStart(2, "0") + suffix;
         });
 
@@ -170,13 +152,10 @@ function fillScheduleTable(selectedStop) {
     tbody.appendChild(row);
   }
 
-  // Zobraz/nezobraz poznámku o "C"
-  const noteC = document.querySelector(".note strong:nth-child(1)").parentElement;
-  if (stopIndex <= ctpIndex) {
-    noteC.style.display = "block";
-  } else {
-    noteC.style.display = "block";
-  }
+  // Poznámka o T spojoch len pre zastávky Erbenova a Orličky
+  const noteC = document.querySelector(".note");
+  const isTStop = stopIndex >= erbenovaIndex;
+  noteC.style.display = isTStop ? "block" : "none";
 }
 
 
