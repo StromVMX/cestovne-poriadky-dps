@@ -145,7 +145,7 @@ function fillScheduleTable(selectedStop) {
 
     // Ak sa vybraná zastávka nachádza medzi Erbenova a Orličky, točna, pridaj odsadenie
     if (stopIndex >= erbenovaIndex && stopIndex <= orlickyIndex) {
-      th.textContent = "\u00A0\u00A0\u00A0\u00A0" + hour;
+      th.textContent = "" + hour;
     } else {
       th.textContent = hour;
     }
