@@ -157,8 +157,8 @@ function fillScheduleTable(selectedStop) {
       const minutes = adjustedDepartures[hour][type]
         .sort((a, b) => a.minute - b.minute)
         .map(({ minute, suffix }) => {
-          if (stopIndex > ctpIndex && suffix.includes("C")) {
-            suffix = suffix.replace("C", "");
+          if (stopIndex > ctpIndex && suffix.includes("T")) {
+            suffix = suffix.replace("T", "");
           }
           return minute.toString().padStart(2, "0") + suffix;
         });
@@ -178,6 +178,7 @@ function fillScheduleTable(selectedStop) {
     noteC.style.display = "block";
   }
 }
+
 
 function fillStopListWithTimes() {
   const ul = document.getElementById("stopList");
