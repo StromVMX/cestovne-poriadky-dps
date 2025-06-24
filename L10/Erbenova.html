@@ -68,7 +68,6 @@ function fillScheduleTable(selectedStop) {
   let offset = 0;
 
   for (let i = 0; i < stopIndex; i++) {
-    // Ak je aktuálna zastávka CT Park, pripočítame 0 (offset sa rieši nižšie)
     if (stopsData[i].name === "CTPark Strančice") {
       offset += 0;
     } else {
@@ -98,17 +97,21 @@ function fillScheduleTable(selectedStop) {
 
         const isCSpoj = suffix.includes("C");
 
+        // Ak sme za CTParkom a spoj je typu C, odstránime "C" zo zobrazenia
+        if (stopIndex > ctpIndex && isCSpoj) {
+          suffix = suffix.replace("C", "");
+        }
+
         // Ak aktuálna zastávka je CTPark a spoj nie je typu C, preskočíme ju
         if (selectedStop === "CTPark Strančice" && !isCSpoj) return;
+
 
         let timeOffset = offset;
 
         if (isCSpoj) {
-          // Ak zastávka je za Čepkovom, pridáme +2 min
           if (stopIndex > cepkovIndex) {
             timeOffset += 1;
           }
-          // Ak zastávka je za CTParkom, pridáme +3 min (toto sa sčítava k predchádzajúcemu, ak platí)
           if (stopIndex > ctpIndex) {
             timeOffset += 3;
           }
@@ -145,13 +148,27 @@ function fillScheduleTable(selectedStop) {
       const td = document.createElement("td");
       const minutes = adjustedDepartures[hour][type]
         .sort((a, b) => a.minute - b.minute)
-        .map(({ minute, suffix }) => minute.toString().padStart(2, "0") + suffix);
+        .map(({ minute, suffix }) => {
+          // Ak sme za CTParkom, odstránime príznak C zo zobrazenia
+          if (stopIndex > ctpIndex && suffix.includes("C")) {
+            suffix = suffix.replace("C", "");
+          }
+          return minute.toString().padStart(2, "0") + suffix;
+        });
 
       td.textContent = minutes.join(" ");
       row.appendChild(td);
     });
 
     tbody.appendChild(row);
+  }
+
+  // Úprava poznámky o "C" - zobrazí sa iba ak je zastávka presne CTPark
+  const noteC = document.querySelector(".note strong:nth-child(1)").parentElement;
+  if (stopIndex <= ctpIndex) {
+    noteC.style.display = "block";
+  } else {
+    noteC.style.display = "none";
   }
 }
 
