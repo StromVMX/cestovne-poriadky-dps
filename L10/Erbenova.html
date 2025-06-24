@@ -35,17 +35,19 @@
 </div>
 
 <script>
+
 const stopsData = [
   { name: "Erbenova" },
   { name: "Poliklinika - město" },
   { name: "Albert HM" },
   { name: "Čepkov" },
+  { name: "CTPark Strančice" }, // ← pridané sem
   { name: "ZŠ Radošovická" },
   { name: "Polní" },
   { name: "Hlavní nádraží" }
 ];
 
-const travelTimes = [1, 2, 1, 1, 1, 1];
+const travelTimes = [1, 2, 1, 1, 1, 1, 1];
 
 const departures = {
   "17": { schoolDays: [], holidays: [], freeDays: [] },
@@ -60,27 +62,35 @@ function fillScheduleTable(selectedStop) {
   const stopIndex = stopsData.findIndex(s => s.name === selectedStop);
   if (stopIndex === -1) return;
 
+  const ctpIndex = stopsData.findIndex(s => s.name === "CTPark Strančice");
+  const cepkovIndex = stopsData.findIndex(s => s.name === "Čepkov");
+
+  const erbenovaIndex = stopsData.findIndex(s => s.name === "Erbenova");
+  const orlickyIndex = stopsData.findIndex(s => s.name === "Orličky, točna");
+
   let offset = 0;
+
   for (let i = 0; i < stopIndex; i++) {
-    offset += travelTimes[i];
+    if (stopsData[i].name === "CTPark Strančice") {
+      offset += 0;
+    } else {
+      offset += travelTimes[i];
+    }
   }
 
   const adjustedDepartures = {};
 
-  // Pre každú hodinu v pôvodných dátach
   for (let hour in departures) {
     ["schoolDays", "holidays", "freeDays"].forEach(type => {
       departures[hour][type].forEach(min => {
-        // Rozlíšime, či min je string s označením
         let baseMinute;
         let suffix = "";
 
         if (typeof min === "string") {
-          // oddelíme číslo a písmeno
           const match = min.match(/^(\d+)(\D*)$/);
           if (match) {
             baseMinute = parseInt(match[1], 10);
-            suffix = match[2]; // napr. "S" alebo prázdny string
+            suffix = match[2];
           } else {
             baseMinute = parseInt(min, 10);
           }
@@ -88,11 +98,30 @@ function fillScheduleTable(selectedStop) {
           baseMinute = min;
         }
 
-        const totalMinutes = parseInt(hour) * 60 + baseMinute + offset;
+        const isCSpoj = suffix.includes("C");
+
+        if (stopIndex > ctpIndex && isCSpoj) {
+          suffix = suffix.replace("C", "");
+        }
+
+        if (selectedStop === "CTPark Strančice" && !isCSpoj) return;
+
+        let timeOffset = offset;
+
+        if (isCSpoj) {
+          if (stopIndex > cepkovIndex) {
+            timeOffset += 1;
+          }
+          if (stopIndex > ctpIndex) {
+            timeOffset += 3;
+          }
+        }
+
+        const totalMinutes = parseInt(hour) * 60 + baseMinute + timeOffset;
         const h = Math.floor(totalMinutes / 60);
         const m = totalMinutes % 60;
-
         const hStr = h.toString();
+
         if (!adjustedDepartures[hStr]) {
           adjustedDepartures[hStr] = {
             schoolDays: [],
@@ -101,29 +130,37 @@ function fillScheduleTable(selectedStop) {
           };
         }
 
-        // Pridáme minútu s prípadným označením
-        adjustedDepartures[hStr][type].push({ minute: m, suffix: suffix });
+        adjustedDepartures[hStr][type].push({ minute: m, suffix });
       });
     });
   }
 
-  // Zoradíme hodiny číselne
   const sortedHours = Object.keys(adjustedDepartures).sort((a, b) => a - b);
 
-  // Vygenerujeme tabuľku
   for (let hour of sortedHours) {
     const row = document.createElement("tr");
     const th = document.createElement("td");
     th.classList.add("hour");
-    th.textContent = hour;
+
+    // Ak sa vybraná zastávka nachádza medzi Erbenova a Orličky, točna, pridaj odsadenie
+    if (stopIndex >= erbenovaIndex && stopIndex <= orlickyIndex) {
+      th.classList.add("indented");
+    } else {
+      th.textContent = hour;
+    }
+
     row.appendChild(th);
 
     ["schoolDays", "holidays", "freeDays"].forEach(type => {
       const td = document.createElement("td");
-
       const minutes = adjustedDepartures[hour][type]
         .sort((a, b) => a.minute - b.minute)
-        .map(({ minute, suffix }) => minute.toString().padStart(2, "0") + suffix);
+        .map(({ minute, suffix }) => {
+          if (stopIndex > ctpIndex && suffix.includes("C")) {
+            suffix = suffix.replace("C", "");
+          }
+          return minute.toString().padStart(2, "0") + suffix;
+        });
 
       td.textContent = minutes.join(" ");
       row.appendChild(td);
@@ -131,7 +168,17 @@ function fillScheduleTable(selectedStop) {
 
     tbody.appendChild(row);
   }
+
+  // Zobraz/nezobraz poznámku o "C"
+  const noteC = document.querySelector(".note strong:nth-child(1)").parentElement;
+  if (stopIndex <= ctpIndex) {
+    noteC.style.display = "block";
+  } else {
+    noteC.style.display = "none";
+  }
 }
+
+
 
 
 
@@ -141,9 +188,21 @@ function fillStopListWithTimes() {
 
   let cumulatedTime = 0;
 
+  const startIndex = stopsData.findIndex(s => s.name === "CTPark Strančice");
+  const endIndex = stopsData.findIndex(s => s.name === "CTPark Strančice");
+
   stopsData.forEach((stop, i) => {
     const li = document.createElement("li");
+
+    // Zisti, či je táto zastávka medzi Erbenova a Orličky, točna (vrátane)
+    const isIndented = i >= startIndex && i <= endIndex;
+
     li.innerHTML = `‎ ${stop.name} <span class="stop-time">${cumulatedTime} min ‎</span>`;
+
+    // Ak áno, posuň ju o 20px doľava
+    if (isIndented) {
+      li.style.paddingLeft = "20px";
+    }
 
     li.addEventListener("click", () => {
       document.getElementById("scheduleTitle").textContent = `Odchody - ${stop.name}`;
@@ -154,6 +213,7 @@ function fillStopListWithTimes() {
     });
 
     ul.appendChild(li);
+
     if (i < travelTimes.length) {
       cumulatedTime += travelTimes[i];
     }
@@ -166,6 +226,7 @@ function fillStopListWithTimes() {
     fillScheduleTable(stopsData[0].name);
   }
 }
+
 
 function setupSearch() {
   const searchInput = document.getElementById("search");
