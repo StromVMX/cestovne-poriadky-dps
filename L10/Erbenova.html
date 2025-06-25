@@ -52,7 +52,7 @@ const stopsData = [
   { name: "Dopravní podnik" }
 ];
 
-const travelTimes = [1, 2, 1, 1, 1, 1, 1, 1, 1];
+const travelTimes = [-2, 2, 1, 1, 1, 1, 1, 1, 1, 1];
 
 const departures = {
   "17": { schoolDays: [], holidays: [], freeDays: [] },
@@ -88,6 +88,7 @@ function fillScheduleTable(selectedStop) {
 
   const ctpIndex = stopsData.findIndex(s => s.name === "CTPark Strančice");
   const cepkovIndex = stopsData.findIndex(s => s.name === "Čepkov");
+  const zsIndex = stopsData.findIndex(s => s.name === "ZŠ Radošovická");
   const hlavniNadraziIndex = stopsData.findIndex(s => s.name === "Hlavní nádraží");
 
   const offsetMap = {
@@ -98,8 +99,8 @@ function fillScheduleTable(selectedStop) {
 
   let offset = (selectedStop in offsetMap)
     ? offsetMap[selectedStop]
-    : stopsData.slice(0, stopIndex).reduce((sum, stop) => 
-        stop.name === "CTPark Strančice" ? sum : sum + (travelTimes[stopsData.indexOf(stop)] || 0), 0);
+    : stopsData.slice(0, stopIndex).reduce((sum, stop, idx) => 
+        stop.name === "CTPark Strančice" ? sum : sum + (travelTimes[idx] || 0), 0);
 
   const adjustedDepartures = {};
 
@@ -116,9 +117,7 @@ function fillScheduleTable(selectedStop) {
           baseMinute = min;
         }
 
-        // Pre CTPark zobraz len spoje s príponou na "C"
         if (selectedStop === "CTPark Strančice" && !suffix.includes("C")) return;
-
         if (selectedStop in offsetMap && !suffix.includes("T")) return;
         if (stopIndex >= hlavniNadraziIndex && !suffix.includes("D")) return;
 
@@ -128,14 +127,15 @@ function fillScheduleTable(selectedStop) {
 
         let timeOffset = offset;
 
-        // NOVÁ LOGIKA: každý spoj s "C" suffixom má predĺženú trasu
-        if (suffix.includes("C")) {
-          if (stopIndex === ctpIndex) timeOffset += 1; // Čepkov → CTPark
-          else if (stopIndex > ctpIndex) timeOffset += 3; // Čepkov → CTPark → ZŠ
-        } else {
-          if (stopIndex > cepkovIndex && stopIndex <= hlavniNadraziIndex) {
-            timeOffset += 1; // klasická cesta Čepkov → ZŠ bez CTParku
+        // Upravená logika pre úsek Čepkov – CTPark – ZŠ
+        if (stopIndex > cepkovIndex && stopIndex <= zsIndex) {
+          if (suffix.includes("C")) {
+            timeOffset += 4; // trasa cez CTPark
+          } else {
+            timeOffset += 1; // klasická trasa bez CTPark
           }
+        } else if (stopIndex === ctpIndex) {
+          timeOffset += 3;
         }
 
         const totalMinutes = parseInt(hour)*60 + baseMinute + timeOffset;
