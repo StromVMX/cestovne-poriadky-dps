@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Hlavní nádraží - Jízdní řád s vyhľadávaním</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Doplním trochu štýlu pre zvýraznenie aktívnej položky */
+    .active {
+      font-weight: bold;
+      background-color: #e0e0e0;
+    }
+  </style>
 </head>
 <body>
 
@@ -47,6 +54,7 @@ const stopsData = [
   { name: "Orličky, točna" }
 ];
 
+// Časy medzi zastávkami v minútach
 const travelTimes = [1, 1, 1, 2, 1, 1, 0, 2, 1];
 
 const departures = {
@@ -56,6 +64,10 @@ const departures = {
   "20": { schoolDays: [6,20,"33T",40,50], holidays: [6,20,"33T",40,50], freeDays: [6,20,"33T",40,50] },
 };
 
+function getQueryParam(name) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(name);
+}
 
 function fillScheduleTable(selectedStop) {
   const tbody = document.getElementById("scheduleBody");
@@ -65,10 +77,8 @@ function fillScheduleTable(selectedStop) {
   if (stopIndex === -1) return;
 
   const erbenovaIndex = stopsData.findIndex(s => s.name === "Erbenova");
-  const orlickyIndex = stopsData.findIndex(s => s.name === "Orličky, točna");
-  const ctpIndex = stopsData.findIndex(s => s.name === "CTPark Strančice");
-  const cepkovIndex = stopsData.findIndex(s => s.name === "Čepkov");
 
+  // Vypočítame časový offset podľa vzdialenosti od začiatku
   let offset = 0;
   for (let i = 0; i < stopIndex; i++) {
     offset += travelTimes[i];
@@ -95,22 +105,10 @@ function fillScheduleTable(selectedStop) {
         }
 
         const isT = suffix.includes("T");
+        // Ak je zastávka za Erbenovou, zobrazíme len T odchody
+        if (stopIndex >= erbenovaIndex && !isT) return;
 
-        // 👉 Filtrovanie podľa zastávky a prípony "T"
-        if (stopIndex >= erbenovaIndex) {
-          if (!isT) return; // spoje bez "T" končia pred Erbenovou
-        }
-
-        let timeOffset = offset;
-
-        // Príklad s C-spojmi
-        const isC = suffix.includes("C");
-        if (isC) {
-          if (stopIndex > cepkovIndex) timeOffset += 1;
-          if (stopIndex > ctpIndex) timeOffset += 3;
-        }
-
-        const totalMinutes = parseInt(hour) * 60 + baseMinute + timeOffset;
+        const totalMinutes = parseInt(hour) * 60 + baseMinute + offset;
         const h = Math.floor(totalMinutes / 60);
         const m = totalMinutes % 60;
         const hStr = h.toString();
@@ -141,54 +139,44 @@ function fillScheduleTable(selectedStop) {
       const td = document.createElement("td");
       const minutes = adjustedDepartures[hour][type]
         .sort((a, b) => a.minute - b.minute)
-        .map(({ minute, suffix }) => {
-          return minute.toString().padStart(2, "0") + suffix;
-        });
+        .map(({ minute, suffix }) => minute.toString().padStart(2, "0") + suffix);
 
       td.textContent = minutes.join(" ");
       row.appendChild(td);
     });
-    
-    
+
     tbody.appendChild(row);
   }
 
-  // Poznámka o T spojoch len pre zastávky Erbenova a Orličky
+  // Zobrazíme poznámku vždy (môžeš upraviť podľa potreby)
   const noteC = document.querySelector(".note");
-  const isTStop = stopIndex >= erbenovaIndex;
-  noteC.style.display = isTStop ? "block" : "block";
+  noteC.style.display = "block";
 }
 
-
-function fillStopListWithTimes() {
+function fillStopListWithTimes(selectedStop) {
   const ul = document.getElementById("stopList");
   ul.innerHTML = "";
 
   let cumulatedTime = 0;
-
-  const startIndex = stopsData.findIndex(s => s.name === "Erbenova");
-  const endIndex = stopsData.findIndex(s => s.name === "Orličky, točna");
+  const erbenovaIndex = stopsData.findIndex(s => s.name === "Erbenova");
+  const orlickyIndex = stopsData.findIndex(s => s.name === "Orličky, točna");
 
   stopsData.forEach((stop, i) => {
     const li = document.createElement("li");
+    const isIndented = i >= erbenovaIndex && i <= orlickyIndex;
 
-    // Zisti, či je táto zastávka medzi Erbenova a Orličky, točna (vrátane)
-    const isIndented = i >= startIndex && i <= endIndex;
-
-    li.innerHTML = `‎ ${stop.name} <span class="stop-time">${cumulatedTime} min ‎</span>`;
-
-    // Ak áno, posuň ju o 20px doľava
-    if (isIndented) {
-      li.style.paddingLeft = "20px";
-    }
+    // Oprava interpolácie stringu na šablónový literál
+    li.innerHTML = `${stop.name} <span class="stop-time">${cumulatedTime} min</span>`;
+    if (isIndented) li.style.paddingLeft = "20px";
 
     li.addEventListener("click", () => {
-      document.getElementById("scheduleTitle").textContent = `Odchody - ${stop.name}`;
-      fillScheduleTable(stop.name);
-
-      ul.querySelectorAll("li").forEach(el => el.classList.remove("active"));
-      li.classList.add("active");
+      // Oprava odkazu pre správnu URL s query parametrom
+      window.location.href = `?stop=${encodeURIComponent(stop.name)}`;
     });
+
+    if (stop.name === selectedStop) {
+      li.classList.add("active");
+    }
 
     ul.appendChild(li);
 
@@ -197,14 +185,9 @@ function fillStopListWithTimes() {
     }
   });
 
-  // Označ prvú aktívnu zastávku
-  const firstLi = ul.querySelector("li");
-  if (firstLi) {
-    firstLi.classList.add("active");
-    fillScheduleTable(stopsData[0].name);
-  }
+  document.getElementById("scheduleTitle").textContent = `Odchody - ${selectedStop}`;
+  fillScheduleTable(selectedStop);
 }
-
 
 function setupSearch() {
   const searchInput = document.getElementById("search");
@@ -222,7 +205,8 @@ function setupSearch() {
 }
 
 window.onload = () => {
-  fillStopListWithTimes();
+  const selectedStop = getQueryParam("stop") || stopsData[0].name;
+  fillStopListWithTimes(selectedStop);
   setupSearch();
 };
 </script>
