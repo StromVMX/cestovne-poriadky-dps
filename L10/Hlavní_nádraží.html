@@ -168,10 +168,16 @@ function fillStopListWithTimes(selectedStop) {
 
   stopsData.forEach((stop, i) => {
     const li = document.createElement("li");
-    const isIndented = i >= startIndex && i <= endIndex;
 
-    li.innerHTML = `‎ ${stop.name} <span class="stop-time">${cumulatedTime} min ‎</span>`;
-    if (isIndented) li.style.paddingLeft = "20px";
+    const isIndented = i >= startIndex && i <= endIndex && stop.name !== "Hlavní nádraží";
+    const isBold = stop.name === "Erbenova" || stop.name === "Hlavní nádraží";
+
+    const stopNameHtml = isBold ? `<strong>${stop.name}</strong>` : stop.name;
+    li.innerHTML = `‎ ${stopNameHtml} <span class="stop-time">${cumulatedTime} min ‎</span>`;
+
+    if (isIndented) {
+      li.style.paddingLeft = "20px";
+    }
 
     li.addEventListener("click", () => {
       window.location.href = `?stop=${encodeURIComponent(stop.name)}`;
