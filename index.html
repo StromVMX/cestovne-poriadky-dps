@@ -26,7 +26,7 @@
 
       <div id="nextDepartureBox" class="next-departure" style="display: none;"></div>
 
-      <div class="note" style="margin-top: 15px; background: #d7e4f2; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem;">
+      <div class="note" style="margin-top: 15px; background: #d7e4f2; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; color: #154a86;">
         <strong>T</strong> Zo zastávky <strong>Erbenova</strong> pokračuje cez <strong>Erbenova, sídliště</strong>; <strong>Orličky, střed</strong> na konečnú <strong>Orličky, točna</strong>.
       </div>
     <a href="/index.html" class="back">← Späť na zoznam zastávok</a>
@@ -44,13 +44,10 @@
       ];
 
       const timetable = {
-        11: [ { min: 13 }, { min: 23, note: "T" }, { min: 28 }, { min: 43 }, { min: 53 } ],
-        12: [ { min: 13 }, { min: 23 }, { min: 28 }, { min: 47, note: "T" }, { min: 53 } ],
-        13: [ { min: 13 }, { min: 23 }, { min: 28 }, { min: 43 }, { min: 53 } ],
-        14: [ { min: 13 }, { min: 23 }, { min: 28 }, { min: 43 }, { min: 53 } ],
-        15: [ { min: 13 }, { min: 23 }, { min: 28 }, { min: 43 }, { min: 53 } ],
-        16: [ { min: 13 }, { min: 23 }, { min: 28 }, { min: 39 },  { min: 41, note: "T" }, ],
-        18: [ { min: 0 }, { min: 15 }, { min: 30 }, { min: 45, note: "T" } ]
+        17: [ { min: 56 } ],
+        18: [ { min: 3 }, { min: 18 }, { min: 26 }, { min: 56, note: "T" } ],
+        19: [ { min: 6 }, { min: 26 }, { min: 56, note: "T" } ],
+        20: [ { min: 6 }, { min: 20 }, { min: 33, note: "T" }, { min: 40 }, { min: 50 } ]
       };
 
       const stopList = document.getElementById("stopList");
