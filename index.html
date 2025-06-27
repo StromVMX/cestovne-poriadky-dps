@@ -2,104 +2,189 @@
 <html lang="sk">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cestovný Poriadok - DPS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Linka 39 - Dlhé diely - Jízdní řád</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Hlavný kontajner pre všetky linky -->
-  <div class="main-container">
+  <div class="container">
+    <div class="stop-column">
+      <input type="text" id="searchInput" placeholder="Vyhľadať zastávku..." aria-label="Vyhľadať zastávku" />
+      <ul id="stopList" role="listbox" aria-label="Zoznam zastávok"></ul>
+    </div>
+    <div class="timetable-column">
+      <h2 id="stopHeading">Odchody</h2>
+      <table aria-label="Tabuľka odchodov">
+        <thead>
+          <tr>
+            <th>Hodina</th>
+            <th>Minúty</th>
+          </tr>
+        </thead>
+        <tbody id="timetableBody"></tbody>
+      </table>
 
-    <!-- Sekcia pre linku 10 -->
-    <section class="line-section">
-      <div class="header">
-        <span class="bus-icon">🚎</span>
-        <button class="line-btn" onclick="openLink('index.html')">10</button>
-        <span class="validity">Platí od 1.6.2025</span>
+      <div id="nextDepartureBox" class="next-departure" style="display: none;"></div>
+
+      <div class="note" style="margin-top: 15px; background: #d7e4f2; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem;">
+        <strong>T</strong> Zo zastávky <strong>Erbenova</strong> pokračuje cez <strong>Erbenova, sídliště</strong>; <strong>Orličky, střed</strong> na konečnú <strong>Orličky, točna</strong>.
       </div>
+    </div>
 
-      <div class="routes">
-        <!-- Smer A -->
-        <div class="direction">
-          <h3>Smer: <span class="destination">Erbenova</span></h3>
-          <ul>
-            <li><a href="L10/Hlavní_nádraží.html"><strong>Hlavní nádraží</strong></a></li>
-            <li><a href="L10/Hlavní_nádraží.html?stop=Polní">Polní</a></li>
-            <li><a href="L10/Hlavní_nádraží.html?stop=ZŠ Radošovická">ZŠ Radošovická</a></li>
-            <li><a href="L10/Hlavní_nádraží.html?stop=Čepkov">Čepkov</a></li>
-            <li><a href="L10/Hlavní_nádraží.html?stop=Albert HM">Albert HM</a></li>
-            <li><a href="L10/Hlavní_nádraží.html?stop=Poliklinika - město">Poliklinika - město</a></li>
-            <li><a href="L10/Hlavní_nádraží.html?stop=Erbenova"><strong>‎ ‎ ‎ ‎ ‎ ‎ Erbenova</strong></a></li>
-            <li><a href="L10/Hlavní_nádraží.html?stop=Erbenova, sídliště">‎ ‎ ‎ ‎ ‎ ‎ Erbenova, sídliště</a></li>
-            <li><a href="L10/Hlavní_nádraží.html?stop=Orličky, střed">‎ ‎ ‎ ‎ ‎ ‎ Orličky, střed</a></li>
-            <li><a href="L10/Hlavní_nádraží.html?stop=Orličky, točna">‎ ‎ ‎ ‎ ‎ ‎ Orličky, točna</a></li>
-          </ul>
-        </div>
+    <script>
+      const stops = [
+        { name: "Hlavní nádraží", zone: "100", minutesFromStart: 0 },
+        { name: "Polní", zone: "100", minutesFromStart: 1 },
+        { name: "ZŠ Radošovická", zone: "100", minutesFromStart: 2 },
+        { name: "Čepkov", zone: "100", minutesFromStart: 3 },
+        { name: "Albert Hypermarket", zone: "100", minutesFromStart: 5 },
+        { name: "Poliklinika-město", zone: "100", minutesFromStart: 6 },
+        { name: "Erbenova", zone: "100", minutesFromStart: 7 }
+      ];
 
-        <!-- Smer B -->
-        <div class="direction">
-          <h3>Smer: <span class="destination">Hlavní nádraží</span></h3>
-          <ul>
-            <li><a href="L10/Erbenova.html"><strong>Erbenova</strong></a></li>
-            <li><a href="L10/Erbenova.html?Poliklinika - město=">Poliklinika - město</a></li>
-            <li><a href="L10/Erbenova.html?Albert HM=">Albert HM</a></li>
-            <li><a href="L10/Erbenova.html?Čepkov=">Čepkov</a></li>
-            <li class="substop"><a href="L10/Erbenova.html?CTPark Strančice=">‎ ‎ ‎ ‎ ‎ ‎ CTPark Strančice</a></li>
-            <li><a href="L10/Erbenova.html?ZŠ Radošovická=">ZŠ Radošovická</a></li>
-            <li><a href="L10/Erbenova.html?Polní=">Polní</a></li>
-            <li><a href="L10/Erbenova.html?stop=Hlavní nádraží"><strong>‎ ‎ ‎ ‎ ‎ ‎ Hlavní nádraží</strong></a></li>
-            <li class="substop"><a href="L10/Erbenova.html?Okrajová=">‎ ‎ ‎ ‎ ‎ ‎ Okrajová</a></li>
-            <li class="substop"><a href="L10/Erbenova.html?Dopravní podnik=">‎ ‎ ‎ ‎ ‎ ‎ Dopravní podnik</a></li>
-          </ul>
-        </div>
-      </div>
-    </section>
+      const timetable = {
+        11: [ { min: 13 }, { min: 23, note: "T" }, { min: 28 }, { min: 43 }, { min: 53 } ],
+        12: [ { min: 13 }, { min: 23 }, { min: 28 }, { min: 47, note: "T" }, { min: 53 } ],
+        13: [ { min: 13 }, { min: 23 }, { min: 28 }, { min: 43 }, { min: 53 } ],
+        14: [ { min: 13 }, { min: 23 }, { min: 28 }, { min: 43 }, { min: 53 } ],
+        18: [ { min: 0 }, { min: 15 }, { min: 30 }, { min: 45, note: "T" } ]
+      };
 
-    <!-- Sekcia pre linku 37 -->
-    <section class="line-section">
-      <div class="header">
-        <span class="bus-icon">🚎</span>
-        <button class="line-btn" onclick="openLink('index.html')">37</button>
-        <span class="validity">Platí od 1.6.2025</span>
-      </div>
+      const stopList = document.getElementById("stopList");
+      const timetableBody = document.getElementById("timetableBody");
+      const searchInput = document.getElementById("searchInput");
+      const stopHeading = document.getElementById("stopHeading");
+      const nextDepartureBox = document.getElementById("nextDepartureBox");
 
-      <div class="routes">
-        <!-- Smer A -->
-        <div class="direction">
-          <h3>Smer: <span class="destination">Orličky, točna</span></h3>
-          <ul>
-            <li><a href="L37/CTPark_Strančice.html"><strong>CTPark Strančice</strong></a></li>
-            <li>Čepkov</li>
-            <li>ZŠ Radošovická</li>
-            <li>Polní</li>
-            <li><a href="L37/Hlavní_nádraží_O.html"><strong>Hlavní nádraží</strong></a></li>
-            <li>Evropská - rondel</li>
-            <li>Družstevní</li>
-            <li>Orličky, střed</li>
-            <li><a href="L37/Orličky_Točna.html"><strong>Orličky, točna</strong></a></li>
-          </ul>
-        </div>
+      function renderStops(filteredStops) {
+        stopList.innerHTML = "";
+        filteredStops.forEach((stop, i) => {
+          const li = document.createElement("li");
+          li.setAttribute('role', 'option');
+          li.setAttribute('tabindex', '0');
+          li.setAttribute('data-index', i);
+          li.setAttribute('aria-selected', 'false');
+          li.innerHTML = `
+            <span>${stop.name}</span>
+            <span class="zone">${stop.minutesFromStart} min</span>
+          `;
+          li.addEventListener("click", () => setSelectedStop(li));
+          li.addEventListener("keydown", e => {
+            if (e.key === "Enter" || e.key === " ") {
+              setSelectedStop(li);
+              e.preventDefault();
+            } else if (e.key === "ArrowDown") {
+              e.preventDefault();
+              if (li.nextElementSibling) li.nextElementSibling.focus();
+            } else if (e.key === "ArrowUp") {
+              e.preventDefault();
+              if (li.previousElementSibling) li.previousElementSibling.focus();
+            }
+          });
+          stopList.appendChild(li);
+        });
+        if (!document.querySelector("#stopList li.selected") && filteredStops.length > 0) {
+          setSelectedStop(stopList.firstChild);
+        }
+      }
 
-        <!-- Smer B -->
-        <div class="direction">
-          <h3>Smer: <span class="destination">CTPark Strančice</span></h3>
-          <ul>
-            <li><a href="L37/Orličky_Točna.html"><strong>Orličky, točna</strong></a></li>
-            <li>Orličky, střed</li>
-            <li>Družstevní</li>
-            <li>Evropská - rondel</li>
-            <li><a href="L37/Hlavní_nádraží_O.html"><strong>Hlavní nádraží</strong></a></li>
-            <li>Polní</li>
-            <li>ZŠ Radošovická</li>
-            <li>Čepkov</li>
-            <li><a href="L37/CTPark_Strančice.html"><strong>CTPark Strančice</strong></a></li>
-          </ul>
-        </div>
-      </div>
-    </section>
+      function setSelectedStop(li) {
+        const prevSelected = stopList.querySelector("li.selected");
+        if (prevSelected) {
+          prevSelected.classList.remove("selected");
+          prevSelected.setAttribute('aria-selected', 'false');
+        }
+        li.classList.add("selected");
+        li.setAttribute('aria-selected', 'true');
+        li.focus();
+        const index = parseInt(li.getAttribute("data-index"), 10);
+        renderTimetable(index);
 
+        const stopName = stops[index].name;
+        stopHeading.textContent = `Odchody - ${stopName}`;
+      }
+
+      function renderTimetable(stopIndex) {
+        const stop = stops[stopIndex];
+        const offset = stop.minutesFromStart;
+        timetableBody.innerHTML = "";
+
+        const displayGroups = {};
+
+        // Zistime aktuálny čas
+        const now = new Date();
+        const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
+
+        // Prepočítaj všetky časy s offsetom
+        Object.keys(timetable).map(Number).forEach(hour => {
+          timetable[hour].forEach(({ min, note }) => {
+            let totalMin = hour * 60 + min + offset;
+            let displayHour = Math.floor(totalMin / 60);
+            let displayMin = totalMin % 60;
+
+            if (!displayGroups[displayHour]) {
+              displayGroups[displayHour] = [];
+            }
+            displayGroups[displayHour].push({ min: displayMin, note });
+          });
+        });
+
+        // Nájdeme najbližší odchod
+        let nextDeparture = null;
+        outer:
+        for (let h = now.getHours(); h <= 23; h++) {
+          if (!displayGroups[h]) continue;
+          for (const m of displayGroups[h].map(e => e.min).sort((a, b) => a - b)) {
+            if (h * 60 + m >= currentTotalMinutes) {
+              nextDeparture = { hour: h, minute: m };
+              break outer;
+            }
+          }
+        }
+
+        // Vykresli tabuľku
+        const sortedDisplayHours = Object.keys(displayGroups).map(Number).sort((a, b) => a - b);
+
+        sortedDisplayHours.forEach(displayHour => {
+          const mins = displayGroups[displayHour];
+          const minsHtml = mins
+            .sort((a, b) => a.min - b.min)
+            .map(({ min, note }) => {
+              const isNext = nextDeparture &&
+                             displayHour === nextDeparture.hour &&
+                             min === nextDeparture.minute;
+              const boxClass = isNext ? 'minute-box next-minute-highlight' : 'minute-box';
+              return `<span class="${boxClass}">${String(min).padStart(2, '0')}${
+                note ? `<span class="note">${note}</span>` : ''
+              }</span>`;
+            }).join("");
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td>${displayHour}</td><td>${minsHtml}</td>`;
+          timetableBody.appendChild(tr);
+        });
+
+        // Zobraz textový výstup o najbližšom odchode
+        if (nextDeparture) {
+          nextDepartureBox.style.display = 'block';
+          nextDepartureBox.textContent = `Najbližší odchod: ${String(nextDeparture.hour).padStart(2, '0')}:${String(nextDeparture.minute).padStart(2, '0')}`;
+        } else {
+          nextDepartureBox.style.display = 'none';
+        }
+      }
+
+      searchInput.addEventListener("input", () => {
+        const query = searchInput.value.trim().toLowerCase();
+        if (query === "") {
+          renderStops(stops);
+        } else {
+          const filtered = stops.filter(s => s.name.toLowerCase().includes(query));
+          renderStops(filtered.length ? filtered : stops);
+        }
+      });
+
+      renderStops(stops);
+    </script>
   </div>
-
-  <script src="script.js"></script>
 </body>
 </html>
