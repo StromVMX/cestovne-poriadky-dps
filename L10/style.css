@@ -72,6 +72,10 @@ ul#stopList li.selected {
   color: #0b2c57;
 }
 
+.selected {
+  background: #d8eaff;
+}
+
 .zone {
   font-weight: normal;
   color: #154a86cc;
@@ -197,4 +201,13 @@ a.back:hover {
   .container {
     gap: 30px;
   }
+}
+
+.indented {
+  padding-left: 20px;
+  color: #555;
+}
+
+.indent {
+  padding-left: 20px;
 }
