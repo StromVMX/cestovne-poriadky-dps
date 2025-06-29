@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cestovný Poriadok Linky 10 a 37 - DPS</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <span class="bus-icon">🚎</span>
+      <button class="line-btn" onclick="openLink('index.html')">10</button>
+      <span class="validity">Platí od 1.6.2025</span>
+    </div>
+
+    <div class="routes">
+      <!-- Smer A linka 10 -->
+      <div class="direction">
+        <h3>SMER JAZDY</h3>
+        <p class="red">Erbenova</p>
+        <ul class="stops-list" id="line10-directionA">
+          <!-- Zastávky s ikonami budú doplnené JS -->
+        </ul>
+      </div>
+
+      <!-- Smer B linka 10 -->
+      <div class="direction">
+        <h3>SMER JAZDY</h3>
+        <p class="red">Hlavní nádraží</p>
+        <ul class="stops-list" id="line10-directionB">
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" style="margin-top: 40px;">
+    <div class="header">
+      <span class="bus-icon">🚎</span>
+      <button class="line-btn" onclick="openLink('index.html')">37</button>
+      <span class="validity">Platí od 1.6.2025</span>
+    </div>
+
+    <div class="routes">
+      <!-- Smer A linka 37 -->
+      <div class="direction">
+        <h3>SMER JAZDY</h3>
+        <p class="red">Orličky, točna</p>
+        <ul class="stops-list" id="line37-directionA">
+        </ul>
+      </div>
+
+      <!-- Smer B linka 37 -->
+      <div class="direction">
+        <h3>SMER JAZDY</h3>
+        <p class="red">CTPark Strančice</p>
+        <ul class="stops-list" id="line37-directionB">
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openLink(url) {
+      window.location.href = url;
+    }
+
+    // Dáta zastávok pre linku 10 s ikonami
+    const line10StopsA = [
+      { name: "Hlavní nádraží", minutesFromStart: 0, Train: true, Barier: true, Automat: true, Znamenie: false, Special: false },
+      { name: "Polní", minutesFromStart: 1, Train: false, Barier: true, Automat: false, Znamenie: false, Special: false },
+      { name: "ZŠ Radošovická", minutesFromStart: 2, Train: false, Barier: true, Automat: true, Znamenie: false, Special: false },
+      { name: "Čepkov", minutesFromStart: 3, Train: false, Barier: false, Automat: false, Znamenie: true, Special: false },
+      { name: "Albert HM", minutesFromStart: 4, Train: false, Barier: false, Automat: true, Znamenie: false, Special: false },
+      { name: "Poliklinika - město", minutesFromStart: 5, Train: false, Barier: false, Automat: false, Znamenie: false, Special: false },
+      { name: "Erbenova", minutesFromStart: 6, Train: false, Barier: false, Automat: true, Znamenie: false, Special: false }
+    ];
+    const line10StopsB = [
+      { name: "Erbenova", minutesFromStart: 0, Train: false, Barier: false, Automat: true, Znamenie: false, Special: false },
+      { name: "Poliklinika - město", minutesFromStart: 1, Train: false, Barier: false, Automat: false, Znamenie: false, Special: false },
+      { name: "Albert HM", minutesFromStart: 2, Train: false, Barier: false, Automat: true, Znamenie: false, Special: false },
+      { name: "Čepkov", minutesFromStart: 3, Train: false, Barier: false, Automat: false, Znamenie: true, Special: false },
+      { name: "ZŠ Radošovická", minutesFromStart: 4, Train: false, Barier: true, Automat: true, Znamenie: false, Special: false },
+      { name: "Polní", minutesFromStart: 5, Train: false, Barier: true, Automat: false, Znamenie: false, Special: false },
+      { name: "Hlavní nádraží", minutesFromStart: 6, Train: true, Barier: true, Automat: true, Znamenie: false, Special: false }
+    ];
+
+    // Dáta zastávok pre linku 37 s ikonami
+    const line37StopsA = [
+      { name: "CTPark Strančice", minutesFromStart: 0, Train: false, Barier: false, Automat: false, Znamenie: false, Special: true },
+      { name: "Čepkov", minutesFromStart: 1, Train: false, Barier: false, Automat: false, Znamenie: false, Special: false },
+      { name: "ZŠ Radošovická", minutesFromStart: 2, Train: false, Barier: true, Automat: true, Znamenie: false, Special: false },
+      { name: "Polní", minutesFromStart: 3, Train: false, Barier: true, Automat: false, Znamenie: false, Special: false },
+      { name: "Hlavní nádraží", minutesFromStart: 4, Train: true, Barier: true, Automat: true, Znamenie: false, Special: false },
+      { name: "Evropská - rondel", minutesFromStart: 5, Train: false, Barier: false, Automat: false, Znamenie: false, Special: false },
+      { name: "Družstevní", minutesFromStart: 6, Train: false, Barier: false, Automat: false, Znamenie: false, Special: false },
+      { name: "Orličky, střed", minutesFromStart: 7, Train: false, Barier: false, Automat: false, Znamenie: true, Special: true },
+      { name: "Orličky, točna", minutesFromStart: 8, Train: false, Barier: false, Automat: true, Znamenie: false, Special: true }
+    ];
+    const line37StopsB = [
+      { name: "Orličky, točna", minutesFromStart: 0, Train: false, Barier: false, Automat: true, Znamenie: false, Special: true },
+      { name: "Orličky, střed", minutesFromStart: 1, Train: false, Barier: false, Automat: false, Znamenie: true, Special: true },
+      { name: "Družstevní", minutesFromStart: 2, Train: false, Barier: false, Automat: false, Znamenie: false, Special: false },
+      { name: "Evropská - rondel", minutesFromStart: 3, Train: false, Barier: false, Automat: false, Znamenie: false, Special: false },
+      { name: "Hlavní nádraží", minutesFromStart: 4, Train: true, Barier: true, Automat: true, Znamenie: false, Special: false },
+      { name: "Polní", minutesFromStart: 5, Train: false, Barier: true, Automat: false, Znamenie: false, Special: false },
+      { name: "ZŠ Radošovická", minutesFromStart: 6, Train: false, Barier: true, Automat: true, Znamenie: false, Special: false },
+      { name: "Čepkov", minutesFromStart: 7, Train: false, Barier: false, Automat: false, Znamenie: false, Special: false },
+      { name: "CTPark Strančice", minutesFromStart: 8, Train: false, Barier: false, Automat: false, Znamenie: false, Special: true }
+    ];
+          if (stop.Train) icons.push('<img src="/icons/Train.png" alt="Vlak" title="Vlak" class="icon">');
+          if (stop.Barier) icons.push('<img src="/icons/Barier.png" alt="Závory" title="Závory" class="icon">');
+          if (stop.Automat) icons.push('<img src="/icons/Automat.png" alt="Automat" title="Automat na lístky" class="icon">');
+          if (stop.Znamenie) icons.push('<img src="/icons/Znamenie.png" alt="Znamenie" title="Zastávka na znamenie" class="icon">');
+          if (stop.Special) icons.push('<img src="/icons/Special.png" alt="Special" title="Občasná zastávka" class="icon">');
+
+    // Funkcia na vytvorenie ikon podľa vlastností zastávky
+    function createIcons(stop) {
+      const fragment = document.createDocumentFragment();
+
+      if (stop.Train) {
+        const imgTrain = document.createElement("img");
+        imgTrain.src = "/icons/Train.png";
+        imgTrain.alt = "Vlak";
+        imgTrain.title = "Železničná zastávka";
+        imgTrain.className = "icon";
+        fragment.appendChild(imgTrain);
+      }
+      if (stop.Barier) {
+        const imgBarier = document.createElement("img");
+        imgBarier.src = "icons/Barier.png";
+        imgBarier.alt = "Bariera";
+        imgBarier.title = "Prechod s barierou";
+        imgBarier.className = "icon";
+        fragment.appendChild(imgBarier);
+      }
+      if (stop.Automat) {
+        const imgAutomat = document.createElement("img");
+        imgAutomat.src = "/icons/Automat.png";
+        imgAutomat.alt = "Automat";
+        imgAutomat.title = "Automat na lístky";
+        imgAutomat.className = "icon";
+        fragment.appendChild(imgAutomat);
+      }
+      if (stop.Znamenie) {
+        const imgZnamenie = document.createElement("img");
+        imgZnamenie.src = "/icons/Znamenie.png";
+        imgZnamenie.alt = "Znamenie";
+        imgZnamenie.title = "Znamenie na zastávke";
+        imgZnamenie.className = "icon";
+        fragment.appendChild(imgZnamenie);
+      }
+      if (stop.Special) {
+        const imgSpecial = document.createElement("img");
+        imgSpecial.src = "/icons/Special.png";
+        imgSpecial.alt = "Špeciálne";
+        imgSpecial.title = "Špeciálna zastávka";
+        imgSpecial.className = "icon";
+        fragment.appendChild(imgSpecial);
+      }
+
+      return fragment;
+    }
+
+    // Funkcia vykreslenia zastávok do daného UL elementu
+    function renderStops(containerId, stops) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+
+      stops.forEach((stop, idx) => {
+        const li = document.createElement("li");
+        li.textContent = stop.name;
+        li.title = `Čas od začiatku: ${stop.minutesFromStart} min.`;
+        li.appendChild(createIcons(stop));
+        container.appendChild(li);
+      });
+    }
+
+    // Inicializácia
+    renderStops("line10-directionA", line10StopsA);
+    renderStops("line10-directionB", line10StopsB);
+    renderStops("line37-directionA", line37StopsA);
+    renderStops("line37-directionB", line37StopsB);
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+    .icon {
+      width: 16px;
+      height: 16px;
+      vertical-align: middle;
+      margin-left: 4px;
+    }
+    .indent {
+      margin-left: 16px;
+    }
+    ul.stops-list {
+      list-style: none;
+      padding: 0;
+    }
+    ul.stops-list li {
+      margin-bottom: 4px;
+      cursor: pointer;
+    }
+    ul.stops-list li.selected {
+      background-color: #d7e4f2;
+    }
+    .zone {
+      margin-left: 10px;
+      font-size: 0.85rem;
+      color: #555;
+    }
