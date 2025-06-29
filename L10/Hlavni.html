@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Linka 10 - Hlavní nádraží - Jízdní řád</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="stop-column">
+      <input type="text" id="searchInput" placeholder="Vyhľadať zastávku..." aria-label="Vyhľadať zastávku" />
+      <ul id="stopList" role="listbox" aria-label="Zoznam zastávok"></ul>
+    </div>
+    <div class="timetable-column">
+      <h2 id="stopHeading">Odchody</h2>
+      <table aria-label="Tabuľka odchodov">
+        <thead>
+          <tr>
+            <th>Hodina</th>
+            <th>Minúty</th>
+          </tr>
+        </thead>
+        <tbody id="timetableBody"></tbody>
+      </table>
+
+      <div id="nextDepartureBox" class="next-departure" style="display: none;"></div>
+
+      <div class="note" style="margin-top: 15px; background: #d7e4f2; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; color: #154a86;">
+        <strong>T</strong> Zo zastávky <strong>Erbenova</strong> pokračuje cez <strong>Erbenova, sídliště</strong>; <strong>Orličky, střed</strong> na konečnú <strong>Orličky, točna</strong>.
+      </div>
+      <a href="/index.html" class="back">← Späť na zoznam zastávok</a>
+    </div>
+
+    <script>
+      const stops = [
+        { name: "Hlavní nádraží", zone: "100", minutesFromStart: 0, Train: true, Barier: true, Automat: true, Znamenie: false, Special: false },
+        { name: "Polní", zone: "100", minutesFromStart: 1, Train: false, Barier: true, Automat: false, Znamenie: false, Special: false },
+        { name: "ZŠ Radošovická", zone: "100", minutesFromStart: 2, Train: false, Barier: true, Automat: true, Znamenie: false, Special: false },
+        { name: "Čepkov", zone: "100", minutesFromStart: 3, Train: false, Barier: false, Automat: false, Znamenie: true, Special: false },
+        { name: "CTPark Strančice", zone: "100", minutesFromStart: 6, onlyForNote: "C", indent: true, Train: false, Barier: false, Automat: false, Znamenie: false, Special: true },
+        { name: "Albert Hypermarket", zone: "100", minutesFromStart: 5, Train: false, Barier: false, Automat: true, Znamenie: false, Special: false },
+        { name: "Poliklinika-město", zone: "100", minutesFromStart: 6, Train: false, Barier: false, Automat: false, Znamenie: false, Special: false },
+        { name: "Erbenova", zone: "100", minutesFromStart: 7, Train: false, Barier: false, Automat: true, Znamenie: false, Special: false },
+        { name: "Erbenova, sídliště", zone: "100", minutesFromStart: 7, indent: true, Train: false, Barier: false, Automat: false, Znamenie: true, Special: true },
+        { name: "Orličky, střed", zone: "100", minutesFromStart: 9, indent: true, Train: false, Barier: false, Automat: false, Znamenie: true, Special: true },
+        { name: "Orličky, točna", zone: "100", minutesFromStart: 10, indent: true, Train: false, Barier: false, Automat: true, Znamenie: false, Special: true }
+      ];
+
+      const timetable = {
+        17: [ { min: 56 } ],
+        18: [ { min: 3 }, { min: 11, note: "C" }, { min: 18 }, { min: 26 }, { min: 41, note: "CT" }, { min: 56, note: "T" } ],
+        19: [ { min: 6 }, { min: 26 }, { min: 56, note: "T" } ],
+        20: [ { min: 6 }, { min: 13, note: "T" }, { min: 20 }, { min: 33, note: "T" }, { min: 40 }, { min: 50 } ],
+      };
+
+      const stopList = document.getElementById("stopList");
+      const timetableBody = document.getElementById("timetableBody");
+      const searchInput = document.getElementById("searchInput");
+      const stopHeading = document.getElementById("stopHeading");
+      const nextDepartureBox = document.getElementById("nextDepartureBox");
+
+      function renderStops(filteredStops) {
+        stopList.innerHTML = "";
+        filteredStops.forEach((stop, i) => {
+          const li = document.createElement("li");
+          li.setAttribute('role', 'option');
+          li.setAttribute('tabindex', '0');
+          li.setAttribute('data-index', i);
+          li.setAttribute('aria-selected', 'false');
+
+          // Ikony podľa vlastností
+          const icons = [];
+          if (stop.Train) icons.push('<img src="/icons/Train.png" alt="Vlak" title="Vlak" class="icon">');
+          if (stop.Barier) icons.push('<img src="/icons/Barier.png" alt="Závory" title="Závory" class="icon">');
+          if (stop.Automat) icons.push('<img src="/icons/Automat.png" alt="Automat" title="Automat na lístky" class="icon">');
+          if (stop.Znamenie) icons.push('<img src="/icons/Znamenie.png" alt="Znamenie" title="Zastávka na znamenie" class="icon">');
+          if (stop.Special) icons.push('<img src="/icons/Special.png" alt="Special" title="Občasná zastávka" class="icon">');
+
+          li.innerHTML = `
+            <span class="${stop.indent ? 'indent' : ''}">
+              ${stop.name} ${icons.join('')}
+            </span>
+          <span class="zone">${stop.minutesFromStart} min</span>
+          `;
+
+          li.addEventListener("click", () => setSelectedStop(li));
+          li.addEventListener("keydown", e => {
+            if (e.key === "Enter" || e.key === " ") {
+              setSelectedStop(li);
+              e.preventDefault();
+            } else if (e.key === "ArrowDown") {
+              e.preventDefault();
+              if (li.nextElementSibling) li.nextElementSibling.focus();
+            } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            if (li.previousElementSibling) li.previousElementSibling.focus();
+            }
+          });
+
+          stopList.appendChild(li);
+        });
+
+        if (!document.querySelector("#stopList li.selected") && filteredStops.length > 0) {
+          setSelectedStop(stopList.firstChild);
+        }
+      }
+
+
+      function setSelectedStop(li) {
+        const prevSelected = stopList.querySelector("li.selected");
+        if (prevSelected) {
+          prevSelected.classList.remove("selected");
+          prevSelected.setAttribute('aria-selected', 'false');
+        }
+        li.classList.add("selected");
+        li.setAttribute('aria-selected', 'true');
+        li.focus();
+        const index = parseInt(li.getAttribute("data-index"), 10);
+        renderTimetable(index);
+
+        const stopName = stops[index].name;
+        stopHeading.textContent = `Odchody - ${stopName}`;
+      }
+
+      function renderTimetable(stopIndex) {
+        const stop = stops[stopIndex];
+        const offset = stop.minutesFromStart;
+        timetableBody.innerHTML = "";
+        const displayGroups = {};
+        const now = new Date();
+        const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
+
+Object.keys(timetable).map(Number).forEach(hour => {
+  timetable[hour].forEach(({ min, note }) => {
+    const stopName = stops[stopIndex].name;
+
+    const isC = !!note && note.includes("C");
+    const isT = !!note && note.includes("T");
+
+    const isAfterPoliklinika = (
+      stopName === "Erbenova" ||
+      stopName.includes("Erbenova, sídliště") ||
+      stopName.includes("Orličky")
+    );
+
+    // Zastavovanie za Poliklinikou len ak je T
+    const shouldShow = !isAfterPoliklinika || isT;
+    if (!shouldShow) return;
+
+    // Zastavenie na CTPark len ak je C
+    if (stop.name === "CTPark Strančice" && !isC) return;
+
+    let adjustedOffset = offset;
+    if (isC) {
+      // Môžeš tu upraviť offsety pre "C" spoje ak treba
+      if (stop.name === "CTPark Strančice") adjustedOffset = 6;
+      if (stop.name === "Albert Hypermarket") adjustedOffset = 10;
+      if (stop.name === "Poliklinika-město") adjustedOffset = 11;
+      if (stop.name === "Erbenova") adjustedOffset = 12;
+    }
+
+    let totalMin = hour * 60 + min + adjustedOffset;
+    let displayHour = Math.floor(totalMin / 60);
+    let displayMin = totalMin % 60;
+
+    if (!displayGroups[displayHour]) {
+      displayGroups[displayHour] = [];
+    }
+    displayGroups[displayHour].push({ min: displayMin, note });
+  });
+});
+
+        let nextDeparture = null;
+        outer:
+        for (let h = now.getHours(); h <= 23; h++) {
+          if (!displayGroups[h]) continue;
+          for (const m of displayGroups[h].map(e => e.min).sort((a, b) => a - b)) {
+            if (h * 60 + m >= currentTotalMinutes) {
+              nextDeparture = { hour: h, minute: m };
+              break outer;
+            }
+          }
+        }
+
+        const sortedDisplayHours = Object.keys(displayGroups).map(Number).sort((a, b) => a - b);
+        sortedDisplayHours.forEach(displayHour => {
+          const mins = displayGroups[displayHour];
+          const minsHtml = mins
+            .sort((a, b) => a.min - b.min)
+            .map(({ min, note }) => {
+              const isNext = nextDeparture &&
+                displayHour === nextDeparture.hour &&
+                min === nextDeparture.minute;
+              const boxClass = isNext ? 'minute-box next-minute-highlight' : 'minute-box';
+              return `<span class="${boxClass}">${String(min).padStart(2, '0')}${
+                note ? `<span class="note">${note}</span>` : ''
+              }</span>`;
+            }).join("");
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td>${displayHour}</td><td>${minsHtml}</td>`;
+          timetableBody.appendChild(tr);
+        });
+
+        if (nextDeparture) {
+          nextDepartureBox.style.display = 'block';
+          nextDepartureBox.textContent = `Najbližší odchod: ${String(nextDeparture.hour).padStart(2, '0')}:${String(nextDeparture.minute).padStart(2, '0')}`;
+        } else {
+          nextDepartureBox.style.display = 'none';
+        }
+      }
+
+      searchInput.addEventListener("input", () => {
+        const query = searchInput.value.trim().toLowerCase();
+        if (query === "") {
+          renderStops(stops);
+        } else {
+          const filtered = stops.filter(s => s.name.toLowerCase().includes(query));
+          renderStops(filtered.length ? filtered : stops);
+        }
+      });
+
+      renderStops(stops);
+    </script>
+  </div>
+</body>
+</html>

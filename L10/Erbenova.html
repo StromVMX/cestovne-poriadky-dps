@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Linka 10 - Erbenova - Jízdní řád</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="stop-column">
+      <input type="text" id="searchInput" placeholder="Vyhľadať zastávku..." aria-label="Vyhľadať zastávku" />
+      <ul id="stopList" role="listbox" aria-label="Zoznam zastávok"></ul>
+    </div>
+    <div class="timetable-column">
+      <h2 id="stopHeading">Odchody</h2>
+      <table aria-label="Tabuľka odchodov">
+        <thead>
+          <tr>
+            <th>Hodina</th>
+            <th>Minúty</th>
+          </tr>
+        </thead>
+        <tbody id="timetableBody"></tbody>
+      </table>
+
+      <div id="nextDepartureBox" class="next-departure" style="display: none;"></div>
+
+      <div class="note" style="margin-top: 15px; background: #d7e4f2; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; color: #154a86;">
+        <strong>D</strong> Zo zastávky <strong>Hlavní nádraží</strong> pokračuje cez <strong>Okrajová</strong> na konečnú <strong>Dopravní podnik</strong>.
+      </div>
+      <div class="note" style="margin-top: 15px; background: #d7e4f2; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; color: #154a86;">
+        <strong>C</strong> Zachádza na zastávku <strong>CTPark Strančice</strong>.
+      </div>
+    <a href="/index.html" class="back">← Späť na zoznam zastávok</a>
+    </div>
+
+    <script>
+      const stops = [
+        { name: "Orličky, točna", zone: "100", minutesFromStart: -3, indent: true, Train: false, Barier: false, Automat: true, Znamenie: false, Special: true  },
+        { name: "Orličky, střed", zone: "100", minutesFromStart: -2, indent: true, Train: false, Barier: false, Automat: false, Znamenie: true, Special: true  },
+        { name: "Erbenova, sídliště", zone: "100", minutesFromStart: -1, indent: true, Train: false, Barier: false, Automat: false, Znamenie: true, Special: true  },
+        { name: "Erbenova", zone: "100", minutesFromStart: 0, Train: false, Barier: false, Automat: true, Znamenie: false, Special: false },
+        { name: "Poliklinika-město", zone: "100", minutesFromStart: 1, Train: false, Barier: false, Automat: false, Znamenie: false, Special: false },
+        { name: "Albert Hypermarket", zone: "100", minutesFromStart: 3, Train: false, Barier: false, Automat: true, Znamenie: false, Special: false },
+        { name: "Čepkov", zone: "100", minutesFromStart: 4, Train: false, Barier: false, Automat: false, Znamenie: true, Special: false },
+        { name: "CTPark Strančice", zone: "100", minutesFromStart: 6, onlyForNote: "C", indent: true, Train: false, Barier: false, Automat: false, Znamenie: false, Special: true },
+        { name: "ZŠ Radošovická", zone: "100", minutesFromStart: 5, Train: false, Barier: true, Automat: true, Znamenie: false, Special: false },
+        { name: "Polní", zone: "100", minutesFromStart: 6, Train: false, Barier: true, Automat: false, Znamenie: false, Special: false },
+        { name: "Hlavní nádraží", zone: "100", minutesFromStart: 9, Train: true, Barier: true, Automat: true, Znamenie: false, Special: false },
+        { name: "Okrajová", zone: "100", minutesFromStart: 10, indent: true, Train: false, Barier: false, Automat: true, Znamenie: false, Special: true  },
+        { name: "Dopravní Podnik", zone: "100", minutesFromStart: 11, indent: true, Train: false, Barier: false, Automat: true, Znamenie: false, Special: true  }
+      ];
+
+      const timetable = {
+        18: [ { min: 5 }, { min: 17 }, { min: 41 }, { min: 53 } ],
+        19: [ { min: 1, note: "T" }, { min: 14 }, { min: 18, note: "T" }, { min: 34 }, { min: 51, note: "T" } ],
+        20: [ { min: 1 }, { min: 11 }, { min: 21 }, { min: 31 }, { min: 41, note: "T" }, { min: 51, note: "CDT" }, { min: 56, note: "D" } ]
+      };
+      
+      const customOffsets = {
+        C: {
+          "ZŠ Radošovická": 9  // namiesto 5
+        }
+      };
+
+      const stopList = document.getElementById("stopList");
+      const timetableBody = document.getElementById("timetableBody");
+      const searchInput = document.getElementById("searchInput");
+      const stopHeading = document.getElementById("stopHeading");
+      const nextDepartureBox = document.getElementById("nextDepartureBox");
+
+      function renderStops(filteredStops) {
+        stopList.innerHTML = "";
+        filteredStops.forEach((stop, i) => {
+          const li = document.createElement("li");
+          li.setAttribute('role', 'option');
+          li.setAttribute('tabindex', '0');
+          li.setAttribute('data-index', i);
+          li.setAttribute('aria-selected', 'false');
+
+          // Ikony podľa vlastností
+          const icons = [];
+          if (stop.Train) icons.push('<img src="/icons/Train.png" alt="Vlak" title="Vlak" class="icon">');
+          if (stop.Barier) icons.push('<img src="/icons/Barier.png" alt="Závory" title="Závory" class="icon">');
+          if (stop.Automat) icons.push('<img src="/icons/Automat.png" alt="Automat" title="Automat na lístky" class="icon">');
+          if (stop.Znamenie) icons.push('<img src="/icons/Znamenie.png" alt="Znamenie" title="Zastávka na znamenie" class="icon">');
+          if (stop.Special) icons.push('<img src="/icons/Special.png" alt="Special" title="Občasná zastávka" class="icon">');
+
+          li.innerHTML = `
+            <span class="${stop.indent ? 'indent' : ''}">
+              ${stop.name} ${icons.join('')}
+            </span>
+          <span class="zone">${stop.minutesFromStart} min</span>
+          `;
+
+          li.addEventListener("click", () => setSelectedStop(li));
+          li.addEventListener("keydown", e => {
+            if (e.key === "Enter" || e.key === " ") {
+              setSelectedStop(li);
+              e.preventDefault();
+            } else if (e.key === "ArrowDown") {
+              e.preventDefault();
+              if (li.nextElementSibling) li.nextElementSibling.focus();
+            } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            if (li.previousElementSibling) li.previousElementSibling.focus();
+            }
+          });
+
+          stopList.appendChild(li);
+        });
+
+        if (!document.querySelector("#stopList li.selected") && filteredStops.length > 0) {
+          setSelectedStop(stopList.firstChild);
+        }
+      }
+
+      function setSelectedStop(li) {
+        const prev = stopList.querySelector("li.selected");
+        if (prev) {
+          prev.classList.remove("selected");
+          prev.setAttribute("aria-selected", "false");
+        }
+        li.classList.add("selected");
+        li.setAttribute("aria-selected", "true");
+        li.focus();
+        const idx = +li.getAttribute("data-index");
+        renderTimetable(idx);
+        stopHeading.textContent = `Odchody - ${stops[idx].name}`;
+      }
+
+      function renderTimetable(stopIndex) {
+        const stop = stops[stopIndex];
+        const now  = new Date();
+        const currentTotal = now.getHours() * 60 + now.getMinutes();
+        timetableBody.innerHTML = "";
+        const groups = {};
+
+        Object.keys(timetable).map(Number).forEach(hour => {
+          timetable[hour].forEach(({ min, note }) => {
+            // Či ide o spoj so značkou "C"
+            const isC = note?.includes("C");
+            // CTPark iba pre C-spoj
+            if (stop.onlyForNote && stop.onlyForNote === "C" && !isC) return;
+            // spoje bez C ignorujú zastávky pred Erbenovou
+            if (stop.minutesFromStart < 0 && !note?.includes("T")) return;
+
+            // vypočítame offset
+            let offset = stop.minutesFromStart;
+
+            // Ak ide o spoj s "C", uprav offsety podľa pravidiel
+            if (isC) {
+              if (stop.name === "CTPark Strančice") {
+                offset = 6;
+              } else if (stop.name === "ZŠ Radošovická") {
+                offset = 9;
+              } else if (stop.name === "Polní") {
+                offset = 10;
+              } else if (stop.name === "Hlavní nádraží") {
+                offset = 13;
+              } else if (stop.name === "Okrajová") {
+                offset = 14;
+              } else if (stop.name === "Dopravní Podnik") {
+                offset = 15;
+              }
+            } else {
+              // Pre bežný spoj zakážeme CTPark
+              if (stop.name === "CTPark Strančice") return;
+
+              // Zastávky Hlavní nádraží, druhá Polní a Dopravní Podnik len pre spoje s D
+              const isD = note?.includes("D");
+
+              if (["Hlavní nádraží", "Okrajová", "Dopravní Podnik"].includes(stop.name) && !isD) return;
+
+              if (stop.name === "ZŠ Radošovická") offset = 5;
+              else if (stop.name === "Polní") offset = 6;
+              else if (stop.name === "Hlavní nádraží") offset = 9;
+              else if (stop.name === "Dopravní Podnik") offset = 10;
+            }
+
+            const totalMin = hour * 60 + min + offset;
+            const h = Math.floor(totalMin / 60);
+            const m = totalMin % 60;
+            if (!groups[h]) groups[h] = [];
+            groups[h].push({ min: m, note });
+          });
+        });
+
+        // najbližší odchod
+        let next = null;
+        outer:
+        for (let h = now.getHours(); h <= 23; h++) {
+          if (!groups[h]) continue;
+          const mins = groups[h].map(x => x.min).sort((a,b)=>a-b);
+          for (const mm of mins) {
+            if (h*60 + mm >= currentTotal) {
+              next = { hour: h, minute: mm };
+              break outer;
+            }
+          }
+        }
+
+        // vykreslíme
+        Object.keys(groups).map(Number).sort((a,b)=>a-b).forEach(h => {
+          const cells = groups[h]
+            .sort((a,b)=>a.min-b.min)
+            .map(({ min, note }) => {
+              const isNext = next && next.hour===h && next.minute===min;
+              const cls = isNext ? 'minute-box next-minute-highlight' : 'minute-box';
+              return `<span class="${cls}">${String(min).padStart(2,'0')}${
+                note ? `<span class="note">${note}</span>` : ''
+              }</span>`;
+            }).join("");
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td>${h}</td><td>${cells}</td>`;
+          timetableBody.appendChild(tr);
+        });
+
+        if (next) {
+          nextDepartureBox.style.display = 'block';
+          nextDepartureBox.textContent = 
+            `Najbližší odchod: ${String(next.hour).padStart(2,'0')}:${String(next.minute).padStart(2,'0')}`;
+        } else {
+          nextDepartureBox.style.display = 'none';
+        }
+      }
+
+      searchInput.addEventListener("input", () => {
+        const q = searchInput.value.trim().toLowerCase();
+        const filtered = q 
+          ? stops.filter(s => s.name.toLowerCase().includes(q)) 
+          : stops;
+        renderStops(filtered.length ? filtered : stops);
+      });
+
+      renderStops(stops);
+    </script>
+  </div>
+</body>
+</html>
