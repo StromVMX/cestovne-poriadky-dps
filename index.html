@@ -27,6 +27,8 @@
         <h3 id="line10-directionB-label">SMER JAZDY</h3>
         <p class="red">Hlavní nádraží</p>
         <ul class="stops-list" id="line10-directionB" role="list"></ul>
+        <li><a href="L10/Erbenova.html"><strong>Erbenova</strong></a></li>
+        <li><a href="L10/Erbenova.html?Poliklinika - město=">Poliklinika - město</a></li>
       </section>
     </div>
   </div>
@@ -126,7 +128,6 @@
       li.title = `Čas od začiatku: ${stop.minutesFromStart} min.`;
       
       const a = document.createElement("a");
-      a.href = `/${toUrlName(stop.name)}.html`;
       a.textContent = stop.name;
       a.style.textDecoration = "none";
       a.style.color = "inherit";
