@@ -211,3 +211,11 @@ a.back:hover {
 .indent {
   padding-left: 20px;
 }
+
+.icon {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  margin-left: 4px;
+  filter: brightness(0) saturate(100%) sepia(100%) hue-rotate(190deg) saturate(500%) brightness(100%);
+}
