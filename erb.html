@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Erbenova - Jízdní řád s vyhľadávaním</title>
+  <link rel="stylesheet" href="style.css" />
+</head> 
+<body>
+
+<div class="container">
+  <div class="stops">
+    <h2>Trasa linky 10</h2>
+    <input id="search" placeholder="Vyhľadať zastávku..." />
+    <ul class="stop-list" id="stopList"></ul>
+  </div>
+
+  <div class="schedule">
+    <h1 id="scheduleTitle">Odchody - Erbenova</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Hodina</th>
+          <th>Pracovné dni<br><small>školský rok</small></th>
+          <th>Pracovné dni<br><small>prázdniny</small></th>
+          <th>Voľné dni</th>
+        </tr>
+      </thead>
+      <tbody id="scheduleBody"></tbody>
+    </table>
+    <div class="note cNote" style="display:none;"><strong>C</strong> Spoj zachádza na zastávku <strong>CTPark Strančice.</strong></div>
+    <div class="note"><strong>T</strong> Spoj začína na zastavke <strong>Orličky, točna.</strong></div>
+    <div class="note"><strong>D</strong> Zo zastávky <strong>Hlavní nádraží</strong> pokračuje cez Okrajová na konečnú Dopravní podnik.</div>
+    <a href="/index.html" class="back">← Späť na zoznam zastávok</a>
+  </div>
+</div>
+
+<script>
+const stopsData = [
+  { name: "Orličky, točna" },
+  { name: "Orličky, střed" },
+  { name: "Erbenova, sídliště" },
+  { name: "Erbenova" },
+  { name: "Poliklinika - město" },
+  { name: "Albert HM" },
+  { name: "Čepkov" },
+  { name: "CTPark Strančice" },
+  { name: "ZŠ Radošovická" },
+  { name: "Polní" },
+  { name: "Hlavní nádraží" },
+  { name: "Okrajová" },
+  { name: "Dopravní podnik" }
+];
+
+const travelTimes = [-2, 2, 1, 1, 1, 1, 1, 1, 1, 1];
+
+const departures = {
+  "17": { schoolDays: [], holidays: [], freeDays: [] },
+  "18": { schoolDays: [5,17,41,53], holidays: [5,17,41,53], freeDays: [5,17,41,53] },
+  "19": { schoolDays: ["1T",14,"21T",34,"51T"], holidays: ["1T",14,"21T",34,"51T"], freeDays: ["1T",14,"21T",34,"51T"] },
+  "20": { schoolDays: [1,11,"2T",31,"41T","51CD",56], holidays: [1,11,"2T",31,"41T","51CD",56], freeDays: [1,11,"2T",31,"41T","51CD",56] }
+};
+
+const specialStops = ["Erbenova", "Hlavní nádraží"];
+const indentedStops = new Set([
+  "Orličky, točna",
+  "Orličky, střed",
+  "Erbenova, sídliště",
+  "CTPark Strančice",
+  "Hlavní nádraží",
+  "Okrajová",
+  "Dopravní podnik"
+]);
+
+function getQueryParam(name) {
+  return new URLSearchParams(window.location.search).get(name);
+}
+
+function fillScheduleTable(selectedStop) {
+  const tbody = document.getElementById("scheduleBody");
+  tbody.innerHTML = "";
+
+  const scheduleTitle = document.getElementById("scheduleTitle");
+  scheduleTitle.textContent = `Odchody - ${selectedStop}`;
+
+  const stopIndex = stopsData.findIndex(s => s.name === selectedStop);
+  if (stopIndex === -1) return;
+
+  const ctpIndex = stopsData.findIndex(s => s.name === "CTPark Strančice");
+  const cepkovIndex = stopsData.findIndex(s => s.name === "Čepkov");
+  const zsIndex = stopsData.findIndex(s => s.name === "ZŠ Radošovická");
+  const hlavniNadraziIndex = stopsData.findIndex(s => s.name === "Hlavní nádraží");
+
+  const offsetMap = {
+    "Orličky, točna": -3,
+    "Orličky, střed": -2,
+    "Erbenova, sídliště": -1
+  };
+
+  let offset = (selectedStop in offsetMap)
+    ? offsetMap[selectedStop]
+    : stopsData.slice(0, stopIndex).reduce((sum, stop, idx) => 
+        stop.name === "CTPark Strančice" ? sum : sum + (travelTimes[idx] || 0), 0);
+
+  const adjustedDepartures = {};
+
+  for (const hour in departures) {
+    ["schoolDays", "holidays", "freeDays"].forEach(type => {
+      departures[hour][type].forEach(min => {
+        let baseMinute, suffix = "";
+
+        if (typeof min === "string") {
+          const match = min.match(/^(\d+)(\D*)$/);
+          baseMinute = match ? parseInt(match[1], 10) : 0;
+          suffix = match ? match[2] : "";
+        } else {
+          baseMinute = min;
+        }
+
+        if (selectedStop === "CTPark Strančice" && !suffix.includes("C")) return;
+        if (selectedStop in offsetMap && !suffix.includes("T")) return;
+        if (stopIndex >= hlavniNadraziIndex && !suffix.includes("D")) return;
+
+        if (stopIndex > cepkovIndex && suffix.includes("C")) {
+          suffix = suffix.replace("C", "");
+        }
+
+        let timeOffset = offset;
+
+        // Upravená logika pre úsek Čepkov – CTPark – ZŠ
+        if (stopIndex > cepkovIndex && stopIndex <= zsIndex) {
+          if (suffix.includes("C")) {
+            timeOffset += 4; // trasa cez CTPark
+          } else {
+            timeOffset += 1; // klasická trasa bez CTPark
+          }
+        } else if (stopIndex === ctpIndex) {
+          timeOffset += 3;
+        }
+
+        const totalMinutes = parseInt(hour)*60 + baseMinute + timeOffset;
+        const h = Math.floor(totalMinutes / 60);
+        const m = totalMinutes % 60;
+        const hStr = h.toString();
+
+        if (!adjustedDepartures[hStr]) {
+          adjustedDepartures[hStr] = { schoolDays: [], holidays: [], freeDays: [] };
+        }
+
+        adjustedDepartures[hStr][type].push({ minute: m, suffix });
+      });
+    });
+  }
+
+  Object.keys(adjustedDepartures).sort((a,b) => a-b).forEach(hour => {
+    const row = document.createElement("tr");
+
+    const th = document.createElement("td");
+    th.className = "hour";
+    th.textContent = hour;
+    row.appendChild(th);
+
+    ["schoolDays", "holidays", "freeDays"].forEach(type => {
+      const td = document.createElement("td");
+      const minutes = adjustedDepartures[hour][type]
+        .sort((a,b) => a.minute - b.minute)
+        .map(({minute, suffix}) => minute.toString().padStart(2, "0") + suffix);
+      td.textContent = minutes.join(" ");
+      row.appendChild(td);
+    });
+
+    tbody.appendChild(row);
+  });
+
+  document.querySelector(".note.cNote").style.display = (stopIndex <= ctpIndex) ? "block" : "none";
+}
+
+function fillStopListWithTimes(selectedStop = null) {
+  const ul = document.getElementById("stopList");
+  ul.innerHTML = "";
+
+  let cumulatedTime = 0;
+
+  stopsData.forEach((stop, i) => {
+    const li = document.createElement("li");
+    const stopName = specialStops.includes(stop.name) ? `<strong>${stop.name}</strong>` : stop.name;
+
+    li.innerHTML = `${stopName} <span class="stop-time">${cumulatedTime} min</span>`;
+
+    if (indentedStops.has(stop.name)) li.classList.add("indented");
+    if (stop.name === selectedStop) li.classList.add("active");
+
+    li.onclick = () => {
+      const url = new URL(window.location);
+      url.searchParams.set("stop", stop.name);
+      window.history.replaceState(null, null, url);
+      fillScheduleTable(stop.name);
+      fillStopListWithTimes(stop.name);
+    };
+
+    ul.appendChild(li);
+
+    if (stop.name !== "CTPark Strančice") {
+      cumulatedTime += travelTimes[i] || 0;
+    }
+  });
+}
+
+function setupSearch() {
+  const searchInput = document.getElementById("search");
+  searchInput.addEventListener("input", () => {
+    const filter = searchInput.value.toLowerCase();
+    document.querySelectorAll("#stopList li").forEach(li => {
+      li.style.display = li.textContent.toLowerCase().includes(filter) ? "" : "none";
+    });
+  });
+}
+
+window.onload = () => {
+  const stopFromUrl = getQueryParam("stop") || "Erbenova";
+  fillStopListWithTimes(stopFromUrl);
+  fillScheduleTable(stopFromUrl);
+  setupSearch();
+};
+</script>
+
+</body>
+</html>

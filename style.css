@@ -28,9 +28,9 @@ body {
   font-size: 28px;
 }
 
-.line-btn {
-  background: #33588298;
-  color: #000;
+.line-btn1 {
+  background: #ff4c00;
+  color: #ffffff;
   font-weight: bold;
   border: none;
   padding: 10px 25px;
@@ -40,7 +40,23 @@ body {
   transition: background 0.3s ease;
 }
 
-.line-btn:hover {
+.line-btn1:hover {
+  background: #335882;
+}
+
+.line-btn2 {
+  background: #00831d;
+  color: #ffffff;
+  font-weight: bold;
+  border: none;
+  padding: 10px 25px;
+  font-size: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.line-btn2:hover {
   background: #335882;
 }
 
@@ -80,6 +96,20 @@ body {
 
 .red {
   color: #154a86;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.orange {
+  color: #ff4c00;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.green {
+  color: #00831d;
   font-weight: bold;
   font-size: 16px;
   margin-bottom: 10px;

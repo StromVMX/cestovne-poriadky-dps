@@ -3,177 +3,116 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cestovný Poriadok Linky 10 a 37 - DPS</title>
+  <title>Cestovný Poriadok Linky 10 - DPS</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Linka 10 -->
   <div class="container">
     <div class="header">
-      <span class="bus-icon" aria-label="Ikona autobusu">🚎</span>
-      <button class="line-btn" onclick="openLink('index.html')" aria-label="Zobraziť linku 10">10</button>
+      <span class="bus-icon">🚌</span>
+      <button class="line-btn1" onclick="openLink('index.html')">10</button>
       <span class="validity">Platí od 1.6.2025</span>
     </div>
 
     <div class="routes">
-      <!-- Smer A linka 10 -->
-      <section class="direction" aria-labelledby="line10-directionA-label">
-        <h3 id="line10-directionA-label">SMER JAZDY</h3>
-        <p class="red">Erbenova</p>
-        <ul class="stops-list" id="line10-directionA" role="list"></ul>
-      </section>
+      <!-- Smer A -->
+      <div class="direction">
+        <h3>SMER JAZDY</h3>
+        <p class="orange">Erbenova</p>
+        <ul>
+          <li><a href="Hlavni.html"><strong>Hlavní nádraží</strong></a></li>
+          <li>Polní</li>
+          <li>ZŠ Radošovická</li>
+          <li>Čepkov</li>
+          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CTPark Strančice</li>
+          <li>Albert HM</li>
+          <li>Poliklinika - město</li>
+          <li><strong>Erbenova</strong></li>
+          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Erbenova, sídliště</li>
+          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Orličky, střed</li>
+          <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Orličky, točna</strong></li>
+        </ul>
+      </div>
 
-      <!-- Smer B linka 10 -->
-      <section class="direction" aria-labelledby="line10-directionB-label">
-        <h3 id="line10-directionB-label">SMER JAZDY</h3>
-        <p class="red">Hlavní nádraží</p>
-        <ul class="stops-list" id="line10-directionB" role="list"></ul>
-        <li><a href="L10/Erbenova.html"><strong>Erbenova</strong></a></li>
-        <li><a href="L10/Erbenova.html?Poliklinika - město=">Poliklinika - město</a></li>
-      </section>
+      <!-- Smer B -->
+      <div class="direction">
+        <h3>SMER JAZDY</h3>
+        <p class="orange">Hlavní nádraží</p>
+        <ul>
+          <li><a href="Erbenova.html"><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Orličky, točna</strong></a></li>
+          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Orličky, střed</li>
+          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Erbenova, sídliště</li>
+          <li>Poliklinika - město</li>
+          <li><strong>Erbenova</strong></li>
+          <li>Poliklinika - město</li>
+          <li>Albert HM</li>
+          <li>Čepkov</li>
+          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CTPark Strančice</li>
+          <li>ZŠ Radošovická</li>
+          <li>Polní</li>
+          <li><strong>Hlavní nádraží</strong></li>
+          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Okrajová</li>
+          <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dopravní Podnik</strong></li>
+        </ul>
+      </div>
     </div>
   </div>
 
-  <div class="container" style="margin-top: 40px;">
+  <!-- Linka 37 -->
+  <div class="container">
     <div class="header">
-      <span class="bus-icon" aria-label="Ikona autobusu">🚎</span>
-      <button class="line-btn" onclick="openLink('index.html')" aria-label="Zobraziť linku 37">37</button>
+      <span class="bus-icon">🚌</span>
+      <button class="line-btn2" onclick="openLink('index.html')">37</button>
       <span class="validity">Platí od 1.6.2025</span>
     </div>
 
     <div class="routes">
-      <!-- Smer A linka 37 -->
-      <section class="direction" aria-labelledby="line37-directionA-label">
-        <h3 id="line37-directionA-label">SMER JAZDY</h3>
-        <p class="red">Orličky, točna</p>
-        <ul class="stops-list" id="line37-directionA" role="list"></ul>
-      </section>
+      <!-- Smer A -->
+      <div class="direction">
+        <h3>SMER JAZDY</h3>
+        <p class="green">Orličky, točna</p>
+        <ul>
+          <li><a href="CTPark.html"><strong>CTPark Strančice</strong></a></li>
+          <li>Čepkov</li>
+          <li>ZŠ Radošovická</li>
+          <li>Polní</li>
+          <li><strong>Hlavní nádraží</strong></li>
+          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Okrajová</li>
+          <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dopravní podnik</strong></li>
+          <li>Evropská-rondel</li>
+          <li>Družstevní</li>
+          <li>Orličky, střed</li>
+          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Orličky, SOU</li>
+          <li><strong>Orličky, točna</strong></li>
+        </ul>
+      </div>
 
-      <!-- Smer B linka 37 -->
-      <section class="direction" aria-labelledby="line37-directionB-label">
-        <h3 id="line37-directionB-label">SMER JAZDY</h3>
-        <p class="red">CTPark Strančice</p>
-        <ul class="stops-list" id="line37-directionB" role="list"></ul>
-      </section>
+      <!-- Smer B -->
+      <div class="direction">
+        <h3>SMER JAZDY</h3>
+        <p class="green">Hlavní nádraží</p>
+        <ul>
+          <li><a href="Orlicky.html"><strong>Orličky, točna</strong></a></li>
+          <li>Orličky, střed</li>
+          <li>Družstevní</li>
+          <li>Evropská-rondel</li>
+          <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dopravní podnik</strong></li>
+          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Okrajová</li>
+          <li><strong>Hlavní nádraží</strong></li>
+          <li>ZŠ Radošovická</li>
+          <li>Polní</li>
+          <li>Čepkov</li>
+          <li><strong>CTPark Strančice</strong></li>
+        </ul>
+      </div>
     </div>
   </div>
 
-<script>
-  function openLink(url) {
-    window.location.href = url;
-  }
-
-  function toUrlName(stopName) {
-    return stopName
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase()
-      .replace(/ /g, "-")
-      .replace(/,/g, "")
-      .replace(/\./g, "")
-      .replace(/--+/g, "-");
-  }
-
-  function createIcons(stop) {
-    const fragment = document.createDocumentFragment();
-
-    if (stop.Train) {
-      const imgTrain = document.createElement("img");
-      imgTrain.src = "/icons/Train.png";
-      imgTrain.alt = "Vlak";
-      imgTrain.title = "Železničná zastávka";
-      imgTrain.className = "icon";
-      fragment.appendChild(imgTrain);
+  <script>
+    function openLink(url) {
+      window.location.href = url;
     }
-    if (stop.Barier) {
-      const imgBarier = document.createElement("img");
-      imgBarier.src = "/icons/Barier.png";
-      imgBarier.alt = "Bariera";
-      imgBarier.title = "Prechod s barierou";
-      imgBarier.className = "icon";
-      fragment.appendChild(imgBarier);
-    }
-    if (stop.Automat) {
-      const imgAutomat = document.createElement("img");
-      imgAutomat.src = "/icons/Automat.png";
-      imgAutomat.alt = "Automat";
-      imgAutomat.title = "Automat na lístky";
-      imgAutomat.className = "icon";
-      fragment.appendChild(imgAutomat);
-    }
-    if (stop.Znamenie) {
-      const imgZnamenie = document.createElement("img");
-      imgZnamenie.src = "/icons/Znamenie.png";
-      imgZnamenie.alt = "Znamenie";
-      imgZnamenie.title = "Znamenie na zastávke";
-      imgZnamenie.className = "icon";
-      fragment.appendChild(imgZnamenie);
-    }
-    if (stop.Special) {
-      const imgSpecial = document.createElement("img");
-      imgSpecial.src = "/icons/Special.png";
-      imgSpecial.alt = "Špeciálne";
-      imgSpecial.title = "Špeciálna zastávka";
-      imgSpecial.className = "icon";
-      fragment.appendChild(imgSpecial);
-    }
-
-    return fragment;
-  }
-
-  function renderStops(containerId, stops) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = "";
-
-    stops.forEach(stop => {
-      const li = document.createElement("li");
-      li.title = `Čas od začiatku: ${stop.minutesFromStart} min.`;
-      
-      const a = document.createElement("a");
-      a.textContent = stop.name;
-      a.style.textDecoration = "none";
-      a.style.color = "inherit";
-      a.setAttribute("aria-label", `Zastávka ${stop.name}`);
-
-      li.appendChild(a);
-      li.appendChild(createIcons(stop));
-      container.appendChild(li);
-    });
-  }
-
-  const line10StopsA = [
-    { name: "Hlavní nádraží", minutesFromStart: 0, Train: true, Barier: true, Automat: true, Znamenie: false, Special: false },
-    { name: "Polní", minutesFromStart: 1, Train: false, Barier: true, Automat: false, Znamenie: false, Special: false },
-    { name: "ZŠ Radošovická", minutesFromStart: 2, Train: false, Barier: true, Automat: true, Znamenie: false, Special: false },
-    { name: "Čepkov", minutesFromStart: 3, Train: false, Barier: false, Automat: false, Znamenie: true, Special: false },
-    { name: "Albert HM", minutesFromStart: 4, Train: false, Barier: false, Automat: true, Znamenie: false, Special: false },
-    { name: "Poliklinika - město", minutesFromStart: 5, Train: false, Barier: false, Automat: false, Znamenie: false, Special: false },
-    { name: "Erbenova", minutesFromStart: 6, Train: false, Barier: false, Automat: true, Znamenie: false, Special: false }
-  ];
-  const line10StopsB = [
-    { name: "Erbenova", minutesFromStart: 0, Train: false, Barier: false, Automat: true, Znamenie: false, Special: false },
-    { name: "Poliklinika - město", minutesFromStart: 1, Train: false, Barier: false, Automat: false, Znamenie: false, Special: false },
-    { name: "Albert HM", minutesFromStart: 2, Train: false, Barier: false, Automat: true, Znamenie: false, Special: false },
-    { name: "Čepkov", minutesFromStart: 3, Train: false, Barier: false, Automat: false, Znamenie: true, Special: false },
-    { name: "ZŠ Radošovická", minutesFromStart: 4, Train: false, Barier: true, Automat: true, Znamenie: false, Special: false },
-    { name: "Polní", minutesFromStart: 5, Train: false, Barier: true, Automat: false, Znamenie: false, Special: false },
-    { name: "Hlavní nádraží", minutesFromStart: 6, Train: true, Barier: true, Automat: true, Znamenie: false, Special: false }
-  ];
-
-  const line37StopsA = [
-    { name: "CTPark Strančice", minutesFromStart: 0, Train: false, Barier: false, Automat: true, Znamenie: false, Special: false },
-    { name: "Křešice", minutesFromStart: 2, Train: false, Barier: true, Automat: false, Znamenie: false, Special: false },
-    { name: "Orličky, točna", minutesFromStart: 5, Train: false, Barier: false, Automat: false, Znamenie: false, Special: true }
-  ];
-  const line37StopsB = [
-    { name: "Orličky, točna", minutesFromStart: 0, Train: false, Barier: false, Automat: false, Znamenie: false, Special: true },
-    { name: "Křešice", minutesFromStart: 3, Train: false, Barier: true, Automat: false, Znamenie: false, Special: false },
-    { name: "CTPark Strančice", minutesFromStart: 6, Train: false, Barier: false, Automat: true, Znamenie: false, Special: false }
-  ];
-
-  // Render všetky zoznamy
-  renderStops("line10-directionA", line10StopsA);
-  renderStops("line10-directionB", line10StopsB);
-  renderStops("line37-directionA", line37StopsA);
-  renderStops("line37-directionB", line37StopsB);
-</script>
+  </script>
 </body>
 </html>
