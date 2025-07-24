@@ -9,7 +9,7 @@
 <body>
   <div class="container">
     <div class="stop-column">
-      <input type="text" id="searchInput" placeholder="Vyhľadať zastávku..." aria-label="Vyhľadať zastávku" />
+      <input type="text" id="searchInput" placeholder="Vyhledat zastávku..." aria-label="Vyhledat zastávku" />
       <ul id="stopList" role="listbox" aria-label="Zoznam zastávok"></ul>
     </div>
     <div class="timetable-column">
@@ -18,7 +18,7 @@
         <thead>
           <tr>
             <th>Hodina</th>
-            <th>Minúty</th>
+            <th>Minuty</th>
           </tr>
         </thead>
         <tbody id="timetableBody"></tbody>
@@ -27,9 +27,9 @@
       <div id="nextDepartureBox" class="next-departure" style="display: none;"></div>
 
       <div class="note" style="margin-top: 15px; background: #d7e4f2; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; color: #154a86;">
-        <strong>T</strong> Zo zastávky <strong>Erbenova</strong> pokračuje cez <strong>Erbenova, sídliště</strong>; <strong>Orličky, střed</strong> na konečnú <strong>Orličky, točna</strong>.
+        <strong>T</strong> Ze zastávky <strong>Erbenova</strong> pokračuje přes <strong>Erbenova, sídliště</strong>; <strong>Orličky, střed</strong> na konečnou <strong>Orličky, točna</strong>.
       </div>
-      <a href="index.html" class="back">← Späť na zoznam zastávok</a>
+      <a href="index.html" class="back">← Zpět na seznam zastávek</a>
     </div>
 
     <script>
@@ -204,7 +204,7 @@ Object.keys(timetable).map(Number).forEach(hour => {
 
         if (nextDeparture) {
           nextDepartureBox.style.display = 'block';
-          nextDepartureBox.textContent = `Najbližší odchod: ${String(nextDeparture.hour).padStart(2, '0')}:${String(nextDeparture.minute).padStart(2, '0')}`;
+          nextDepartureBox.textContent = `Nejbližší odjezd: ${String(nextDeparture.hour).padStart(2, '0')}:${String(nextDeparture.minute).padStart(2, '0')}`;
         } else {
           nextDepartureBox.style.display = 'none';
         }

@@ -9,7 +9,7 @@
 <body>
   <div class="container">
     <div class="stop-column">
-      <input type="text" id="searchInput" placeholder="Vyhľadať zastávku..." aria-label="Vyhľadať zastávku" />
+      <input type="text" id="searchInput" placeholder="Vyhledat zastávku..." aria-label="Vyhledat zastávku" />
       <ul id="stopList" role="listbox" aria-label="Zoznam zastávok"></ul>
     </div>
     <div class="timetable-column">
@@ -18,7 +18,7 @@
         <thead>
           <tr>
             <th>Hodina</th>
-            <th>Minúty</th>
+            <th>Minuty</th>
           </tr>
         </thead>
         <tbody id="timetableBody"></tbody>
@@ -27,16 +27,16 @@
       <div id="nextDepartureBox" class="next-departure" style="display: none;"></div>
 
       <div class="note" style="margin-top: 15px; background: #d7e4f2; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; color: #154a86;">
-        <strong>D</strong> Zo zastávky <strong>Hlavní nádraží</strong> pokračuje cez <strong>Okrajová</strong> na konečnú <strong>Dopravní podnik</strong>.
+        <strong>D</strong> Ze zastávky <strong>Hlavní nádraží</strong> pokračuje přes <strong>Okrajová</strong> na konečnou <strong>Dopravní podnik</strong>.
       </div>
       <div class="note" style="margin-top: 15px; background: #d7e4f2; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; color: #154a86;">
-        <strong>C</strong> Zachádza na zastávku <strong>CTPark</strong>.
+        <strong>C</strong> Zajíždí na zastávku <strong>CTPark</strong>.
       </div>
       <div class="note" style="margin-top: 15px; background: #d7e4f2; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; color: #154a86;">
-        <strong>E</strong> Zo zastávky <strong>Evropská-rondel</strong> pokračuje cez <strong>Okrajová</strong> na konečnú <strong>Dopravní podnik</strong>.
+        <strong>E</strong> Ze zastávky <strong>Evropská-rondel</strong> pokračuje přes <strong>Okrajová</strong> na konečnou <strong>Dopravní podnik</strong>.
       </div>
 
-      <a href="index.html" class="back">← Späť na zoznam zastávok</a>
+      <a href="index.html" class="back">← Zpět na seznam zastávek</a>
     </div>
 
     <script>
@@ -202,7 +202,7 @@
         if (next) {
           nextDepartureBox.style.display = 'block';
           nextDepartureBox.textContent =
-            `Najbližší odchod: ${String(next.hour).padStart(2, '0')}:${String(next.minute).padStart(2, '0')}`;
+            `Nejbližší odjezd: ${String(next.hour).padStart(2, '0')}:${String(next.minute).padStart(2, '0')}`;
         } else {
           nextDepartureBox.style.display = 'none';
         }
