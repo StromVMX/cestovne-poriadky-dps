@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linka 53 - smer Trnavské mýto</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body onload="renderPage(lineData)">
+  <div class="header">
+    <h1>Linka 53 - smer Trnavské mýto</h1>
+  </div>
+  <div class="main-layout">
+    <div class="stops-panel">
+      <ul id="stops"></ul>
+    </div>
+    <div class="times-panel">
+      <h2>Odchody</h2>
+      <table>
+        <thead><tr><th>Čas</th></tr></thead>
+        <tbody id="times"></tbody>
+      </table>
+    </div>
+  </div>
+  <script src="script.js"></script>
+  <script>
+    const lineData = [{"name": "Vajnory", "timeOffset": 36}, {"name": "Zlat\u00e9 Piesky", "timeOffset": 20}, {"name": "OC Ro\u017e\u0148avsk\u00e1", "timeOffset": 18}, {"name": "Depo Trn\u00e1vka", "timeOffset": 14}, {"name": "Slovinsk\u00e1", "timeOffset": 11}, {"name": "Sabinovsk\u00e1", "timeOffset": 7}, {"name": "Bajkalsk\u00e1", "timeOffset": 5}, {"name": "Nov\u00e1 doba", "timeOffset": 2}, {"name": "Trnavsk\u00e9 m\u00fdto", "timeOffset": 0}];
+  </script>
+</body>
+</html>

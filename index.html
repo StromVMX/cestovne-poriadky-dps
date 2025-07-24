@@ -1,118 +1,30 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Jízdní řád Linek - DPS</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Výber linky - Autobusový CP</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Linka 10 -->
-  <div class="container">
-    <div class="header">
-      <span class="bus-icon">🚌</span>
-      <button class="line-btn1" onclick="openLink('index.html')">10</button>
-      <span class="validity">Platí od 1.6.2025</span>
-    </div>
-
-    <div class="routes">
-      <!-- Smer A -->
-      <div class="direction">
-        <h3>SMĚR JÍZDY</h3>
-        <p class="orange">Erbenova</p>
-        <ul>
-          <li><a href="Hlavni.html"><strong>Hlavní nádraží</strong></a></li>
-          <li>Polní</li>
-          <li>ZŠ Radošovická</li>
-          <li>Čepkov</li>
-          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CTPark Strančice</li>
-          <li>Albert HM</li>
-          <li>Poliklinika - město</li>
-          <li><strong>Erbenova</strong></li>
-          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Erbenova, sídliště</li>
-          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Orličky, střed</li>
-          <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Orličky, točna</strong></li>
-        </ul>
-      </div>
-
-      <!-- Smer B -->
-      <div class="direction">
-        <h3>SMĚR JÍZDY</h3>
-        <p class="orange">Hlavní nádraží</p>
-        <ul>
-          <li><a href="Erbenova.html"><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Orličky, točna</strong></a></li>
-          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Orličky, střed</li>
-          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Erbenova, sídliště</li>
-          <li>Poliklinika - město</li>
-          <li><strong>Erbenova</strong></li>
-          <li>Poliklinika - město</li>
-          <li>Albert HM</li>
-          <li>Čepkov</li>
-          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CTPark Strančice</li>
-          <li>ZŠ Radošovická</li>
-          <li>Polní</li>
-          <li><strong>Hlavní nádraží</strong></li>
-          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Okrajová</li>
-          <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dopravní Podnik</strong></li>
-        </ul>
-      </div>
+  <div class="header">
+    <h1>Autobusový cestovný poriadok</h1>
+  </div>
+  <div class="selector">
+    <h2>Vyberte linku a smer</h2>
+    <label for="shift-time">Začiatok šichty:</label>
+    <input type="time" id="shift-time" value="18:00">
+    <div class="line-buttons">
+      <button onclick="goToPage('linka53_vajnory.html')">Linka 53 - smer Vajnory</button>
+      <button onclick="goToPage('linka53_trnavske.html')">Linka 53 - smer Trnavské mýto</button>
+      <button onclick="goToPage('linka54_vajnory.html')">Linka 54 - smer Vajnory</button>
+      <button onclick="goToPage('linka54_trnavske.html')">Linka 54 - smer Trnavské mýto</button>
     </div>
   </div>
-
-  <!-- Linka 37 -->
-  <div class="container">
-    <div class="header">
-      <span class="bus-icon">🚌</span>
-      <button class="line-btn2" onclick="openLink('index.html')">37</button>
-      <span class="validity">Platí od 1.6.2025</span>
-    </div>
-
-    <div class="routes">
-      <!-- Smer A -->
-      <div class="direction">
-        <h3>SMĚR JÍZDY</h3>
-        <p class="green">Orličky, točna</p>
-        <ul>
-          <li><a href="CTPark.html"><strong>CTPark Strančice</strong></a></li>
-          <li>Čepkov</li>
-          <li>ZŠ Radošovická</li>
-          <li>Polní</li>
-          <li><strong>Hlavní nádraží</strong></li>
-          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Okrajová</li>
-          <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dopravní podnik</strong></li>
-          <li>Evropská-rondel</li>
-          <li>Družstevní</li>
-          <li>Orličky, střed</li>
-          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Orličky, SOU</li>
-          <li><strong>Orličky, točna</strong></li>
-        </ul>
-      </div>
-
-      <!-- Smer B -->
-      <div class="direction">
-        <h3>SMĚR JÍZDY</h3>
-        <p class="green">Hlavní nádraží</p>
-        <ul>
-          <li><a href="Orlicky.html"><strong>Orličky, točna</strong></a></li>
-          <li>Orličky, střed</li>
-          <li>Družstevní</li>
-          <li>Evropská-rondel</li>
-          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Okrajová</li>
-          <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dopravní podnik</strong></li>
-          <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Okrajová</li>
-          <li><strong>Hlavní nádraží</strong></li>
-          <li>ZŠ Radošovická</li>
-          <li>Polní</li>
-          <li>Čepkov</li>
-          <li><strong>CTPark Strančice</strong></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
   <script>
-    function openLink(url) {
-      window.location.href = url;
+    function goToPage(page) {
+      const shift = document.getElementById('shift-time').value;
+      window.location.href = page + '?start=' + shift;
     }
   </script>
 </body>
