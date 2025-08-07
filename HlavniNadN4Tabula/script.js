@@ -13,21 +13,23 @@ function getTimeInMinutes(timeStr) {
 
 function getCurrentTimeStr() {
   const now = new Date();
-  return now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+  return now.toLocaleTimeString('sk-SK', { hour: '2-digit', minute: '2-digit', hour12: false });
 }
 
 function timeDiffMinutes(departureTimeStr) {
   const now = new Date();
-  const currentMinutes = now.getHours() * 60 + now.getMinutes();
   const [depH, depM] = departureTimeStr.split(":").map(Number);
-  const depMinutes = depH * 60 + depM;
+  const depDate = new Date(now);
+  depDate.setHours(depH, depM, 0, 0);  // nastavenie odchodového času v dnešnom dni
 
-  const diff = depMinutes - currentMinutes;
-  if (diff <= 0) return "BLINK";      // odchod už prešiel
-  if (diff < 1) return "<1 min";      // menej ako 1 minúta
-  if (diff <= 10) return diff + " min";
-  return departureTimeStr;
+  const diffSec = (depDate - now) / 1000;  // rozdiel v sekundách
+
+  if (diffSec <= 0) return "BLINK";           // už odišiel
+  if (diffSec <= 60) return "<1 min";         // menej ako 1 minúta
+  if (diffSec <= 600) return Math.floor(diffSec / 60) + " min";  // do 10 minút
+  return departureTimeStr;                    // inak presný čas
 }
+
 
 function updateClock() {
   const now = new Date();
