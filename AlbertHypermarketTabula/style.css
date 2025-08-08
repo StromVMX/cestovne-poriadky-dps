@@ -1,0 +1,112 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #0b0c10;
+  color: #eee;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  align-items: flex-start;
+  padding-top: 40px;
+}
+
+.board {
+  width: 90%;
+  max-width: 900px;
+  background: linear-gradient(145deg, #121619, #1f2227);
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  background-color: #16213e;
+  padding: 20px 30px;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  border-radius: 14px 14px 0 0;
+  box-shadow: inset 0 -3px 6px rgba(0,0,0,0.4);
+  user-select: none;
+}
+
+.station {
+  color: #ffd369;
+}
+
+.time {
+  font-family: 'Courier New', monospace;
+  color: #87ceeb;
+}
+
+.upcoming {
+  background-color: #1c1f26;
+  border-radius: 0 0 14px 14px;
+  overflow: hidden;
+  box-shadow: inset 0 3px 8px rgba(255, 255, 255, 0.05);
+}
+
+.upcoming-row {
+  display: grid;
+  grid-template-columns: 1fr 4fr 1.2fr;
+  padding: 15px 25px;
+  border-bottom: 1px solid #2a2d36;
+  font-size: 1.15rem;
+  transition: background-color 0.3s ease;
+}
+
+.upcoming-row:nth-child(odd) {
+  background-color: #23272f;
+}
+
+.upcoming-row:nth-child(even) {
+  background-color: #1e2128;
+}
+
+.upcoming-row:hover {
+  background-color: #30475e;
+  cursor: default;
+}
+
+.labels {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background-color: #2e3a59;
+  padding: 15px 25px;
+  display: grid;
+  grid-template-columns: 1fr 4fr 1.2fr;
+  user-select: none;
+  border-bottom: 2px solid #455a77;
+}
+
+/* Linka kontajner, aby sme mohli vložiť badge */
+.upcoming-row div:first-child {
+  display: inline-block;
+}
+
+/* badge pre linku */
+.line-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  color: white;
+  font-weight: 700;
+  min-width: 40px;
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.blinker {
+  font-weight: 700;
+  color: white;
+  animation: blink 1s steps(1) infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  50.1%, 100% { opacity: 0; }
+}

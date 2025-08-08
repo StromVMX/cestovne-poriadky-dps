@@ -1,4 +1,4 @@
-const SHEET_URL = "https://sheets.googleapis.com/v4/spreadsheets/1inuGPDSSCpBMrxxYirCa_AQ2XE3FTjvkXc_YeU_mMkQ/values/'Odjezdové panely MHD'!B4:D34?key=AIzaSyDWkH8KqIP_zg8xj-2F6SqsDXhplhSFctg";
+const SHEET_URL = "https://sheets.googleapis.com/v4/spreadsheets/1inuGPDSSCpBMrxxYirCa_AQ2XE3FTjvkXc_YeU_mMkQ/values/'Odjezdové panely MHD'!N4:P39?key=AIzaSyDWkH8KqIP_zg8xj-2F6SqsDXhplhSFctg";
 
 const lineColors = {
   "10": "#ff4c00ff",   // oranžová
@@ -42,7 +42,7 @@ async function fetchData() {
     const response = await fetch(SHEET_URL);
     const data = await response.json();
 
-    document.getElementById('station-name').textContent = "Hlavní Nádraží N4";
+    document.getElementById('station-name').textContent = "Albert Hypermarket";
 
     const list = document.getElementById('upcoming-list');
     list.innerHTML = '';

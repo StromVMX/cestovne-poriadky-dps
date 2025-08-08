@@ -151,3 +151,45 @@ body {
   margin-left: 0px;
   filter: brightness(0) saturate(100%) sepia(100%) hue-rotate(190deg) saturate(500%) brightness(100%);
 }
+
+.dp_blue {
+  color: #52ded9;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.erbenova_orange {
+  color: #ffb84e;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.hlavni_green {
+  color: #67d271;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.albert_red {
+  color: #ff6b6b;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.orlicky_pink {
+  color: #fbacff;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.ctpark_blue {
+  color: #2c8dff;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
